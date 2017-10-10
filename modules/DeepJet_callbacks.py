@@ -6,7 +6,7 @@ Created on 7 Apr 2017
 from __future__ import print_function
 
 from ReduceLROnPlateau import ReduceLROnPlateau
-from keras.callbacks import Callback, EarlyStopping,History,ModelCheckpoint #, ReduceLROnPlateau # , TensorBoard
+from keras.callbacks import Callback, EarlyStopping,History,ModelCheckpoint, TensorBoard, LambdaCallback #, ReduceLROnPlateau #
 # loss per epoch
 from time import time
 from pdb import set_trace
@@ -84,11 +84,35 @@ class saveCheckPointDeepJet(Callback):
         self.djmodel=model
     def on_epoch_end(self,epoch, epoch_logs={}):
         self.djmodel.save(self.outputDir+"/KERAS_check_model_last.h5")
+
+#under construction
+class predictionHistory(Callback):
+
+    def __init__(self,outputDir, model):
+        Callback.__init__(self)
+        self.djmodel = model
+        self.outputDir = outputDir
+
+    def on_epoch_end(self, batch, logs={}):
+        y_pred = self.model.predict(self.model.training_data)
+        y_true = self.model.validation_data[1]
+
+        import os
+        predhisfile=os.path.join( self.outputDir, 'predhis.log')
+        f = open(predhisfile, 'a')
+        f.write(str(y_pred))
+        f.write(" ")
+        f.write(str(y_true))
+
+        f.write("\n")
+        f.close()
+        return
         
         
 class DeepJet_callbacks(object):
     def __init__(self,
                  model,
+                 datacollection,
                  stop_patience=10,
                  lr_factor=0.5,
                  lr_patience=1,
@@ -116,20 +140,42 @@ class DeepJet_callbacks(object):
                                         monitor='val_loss', verbose=1, 
                                         save_best_only=True, save_weights_only=False)
         
+
         self.modelcheckperiod=ModelCheckpoint(outputDir+"/KERAS_check_model_epoch{epoch:02d}.h5", verbose=1,period=checkperiod, save_weights_only=False)
+
         
         self.modelcheck=saveCheckPointDeepJet(outputDir,model)
-        
-        
+
+        self.tensorboard = TensorBoard(log_dir=outputDir+"/logs",histogram_freq=1)
   
-        self.history=History()
+        self.history = History()
         self.timer = Losstimer()
+
+        self.predictionhistory = predictionHistory(outputDir, model)
         
         self.tokencheck=checkTokens_callback(minTokenLifetime)
+
+
+        def pred(epoch, logs):
+            predx, predy = next(datacollection.generator())
+
+            predout = model.predict(
+                predx,
+                batch_size=1
+            )
+
+            print("Target\n")
+            print(predy)
+            print("Prediction\n")
+            print(predout)
+
+        self.pred = LambdaCallback(on_batch_end=pred)
+
   
         self.callbacks=[
             self.nl_begin, self.tokencheck,
             self.modelbestcheck, self.modelcheck,self.modelcheckperiod,
             self.reduce_lr, self.stopping, self.nl_end, self.history,
             self.timer
+            #, self.tensorboard, self.testmodelcb
         ]

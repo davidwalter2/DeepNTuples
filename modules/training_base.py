@@ -18,7 +18,9 @@ from Losses import *
 class training_base(object):
     
     def __init__(self, 
+
                  splittrainandtest=0.9,
+
                  useweights=False,
                  testrun=False,resumeSilently=False):
         
@@ -90,6 +92,7 @@ class training_base(object):
             
             
         self.train_data=DataCollection()
+        print('read from datacollection')
         self.train_data.readFromFile(self.inputData)
         self.train_data.useweights=useweights
         
@@ -108,7 +111,7 @@ class training_base(object):
         self.keras_inputs=[]
         self.keras_inputsshapes=[]
         
-        print(shapes)
+        print('input shapes: ',shapes)
         
         for s in shapes:
             self.keras_inputs.append(keras.layers.Input(shape=s))
@@ -136,6 +139,7 @@ class training_base(object):
                                self.train_data.getNClassificationTargets(),
                                self.train_data.getNRegressionTargets(),
                                **modelargs)
+
     
     def saveCheckPoint(self,addstring=''):
         
@@ -210,10 +214,13 @@ class training_base(object):
         averagesamplesperfile=self.train_data.getAvEntriesPerFile()
         samplespreread=maxqsize*batchsize
         nfilespre=max(int(samplespreread/averagesamplesperfile),2)
+        
         nfilespre+=1
         #if nfilespre>15:nfilespre=15
+
         print('best pre read: '+str(nfilespre)+'  a: '+str(averagesamplesperfile))
         print('total sample size: '+str(self.train_data.nsamples))
+        print('max files open: ', self.train_data.maxFilesOpen)
         #exit()
         
         if self.train_data.maxFilesOpen<0:
@@ -223,9 +230,9 @@ class training_base(object):
         #self.keras_model.save(self.outputDir+'KERAS_check_last_model.h5')
         print('setting up callbacks')
         from DeepJet_callbacks import DeepJet_callbacks
+
         
-        
-        callbacks=DeepJet_callbacks(self.keras_model,
+        callbacks=DeepJet_callbacks(self.keras_model, self.train_data,
                                     stop_patience=stop_patience, 
                                     lr_factor=lr_factor,
                                     lr_patience=lr_patience, 

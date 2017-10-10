@@ -49,25 +49,34 @@ def _read_arrs_(arrwl,arrxl,arryl,doneVal,fileprefix,tdref=None,randomSeed=None)
     from sklearn.utils import shuffle
     try:
         idstrs=['w','x','y']
+        #print('open file ', fileprefix) #debug
         h5f = h5py.File(fileprefix,'r')
         alllists=[arrwl,arrxl,arryl]
+        #print('loop ...') #debug
         for j in range(len(idstrs)):
             fidstr=idstrs[j]
             arl=alllists[j]
             for i in range(len(arl)):
+                #print('create filename') #debug
                 idstr=fidstr+str(i)
+                #print('read direct with id sting ', idstr) #debug
                 h5f[idstr].read_direct(arl[i])
+
+                #print('next') #debug
                 #shuffle each read-in, but each array with the same seed (keeps right asso)
                 if randomSeed:
+                    # print('shuffle')
                     arl[i]=shuffle(arl[i], random_state=randomSeed)
                 
         doneVal.value=True
         h5f.close()
         del h5f
     except Exception as d:
+        print('smth went wrong here ...')
         raise d
     finally:
         if tdref:
+            print('remove file from ram disc')
             tdref.removeRamDiskFile()  
     
     
@@ -275,7 +284,8 @@ class TrainData(object):
         _writeoutArrays(self.w,'w',h5f)
         _writeoutArrays(self.x,'x',h5f)
         _writeoutArrays(self.y,'y',h5f)
-        
+
+
         h5f.close()
        
     
@@ -311,7 +321,7 @@ class TrainData(object):
             self.ramdiskfile=None
                
     def readIn_async(self,fileprefix,read_async=True,shapesOnly=False,ramdiskpath='',randomseed=None):
-        
+        print('readIn_async ', fileprefix)
         if self.readthread and read_async:
             print('\nTrainData::readIn_async: started new read before old was finished. Intended? Waiting for first to finish...\n')
             self.readIn_join()
@@ -353,11 +363,13 @@ class TrainData(object):
                 self.w_list,self.w_shapes=_readListInfo_('w')
                 self.x_list,self.x_shapes=_readListInfo_('x')
                 self.y_list,self.y_shapes=_readListInfo_('y')
+
             else:
                 print('\nshape known\n')
                 self.w_list,_=_readListInfo_('w')
                 self.x_list,_=_readListInfo_('x')
                 self.y_list,_=_readListInfo_('y')
+
                 
             self.h5f.close()
             del self.h5f
@@ -457,6 +469,7 @@ class TrainData(object):
             else:
                 self.readdone=multiprocessing.Value('b',False)
                 _read_arrs_(self.w_list,self.x_list,self.y_list,self.readdone,readfile,self,randomseed)
+
             
             
         

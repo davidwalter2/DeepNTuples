@@ -28,7 +28,7 @@ class DataCollection(object):
         '''
         self.clear()
         self.nprocs = nprocs       
-        self.meansnormslimit=500000 
+        self.meansnormslimit=500000
         if infile:
             self.readFromFile(infile)
         
@@ -49,6 +49,7 @@ class DataCollection(object):
         self.maxFilesOpen=2
         self.means=None
         self.classweights={}
+
 
     def __iadd__(self, other):
         'A += B'
@@ -176,6 +177,7 @@ class DataCollection(object):
             return self.nsamples
         
     def getAvEntriesPerFile(self):
+        print('get av entries per file of total ',self.nsamples, ' samples')
         return float(self.nsamples)/float(len(self.samples))
         
     
@@ -188,13 +190,17 @@ class DataCollection(object):
         return count
         
     def writeToFile(self,filename):
+        print('Write to file ',filename, ' ...')
         import pickle
         fd=open(filename,'wb')
         self.dataclass.clear()
         pickle.dump(self.samples, fd,protocol=0 )
+        print('     samples ', self.samples)
         pickle.dump(self.sampleentries, fd,protocol=0 )
+        print('     sampleentries ', self.sampleentries)
         pickle.dump(self.originRoots, fd,protocol=0 )
         pickle.dump(self.nsamples, fd,protocol=0 )
+        print('     nsamples ', self.nsamples)
         pickle.dump(self.useweights, fd,protocol=0 )
         pickle.dump(self.__batchsize, fd,protocol=0 )
         pickle.dump(self.dataclass, fd,protocol=0 )
@@ -204,12 +210,16 @@ class DataCollection(object):
         fd.close()
         
     def readFromFile(self,filename):
+        print('Read from file ', filename, ' ...')
         import pickle
         fd=open(filename,'rb')
         self.samples=pickle.load(fd)
+        print('     samples: ', self.samples)
         self.sampleentries=pickle.load(fd)
+        print('     sampleentries ', self.sampleentries)
         self.originRoots=pickle.load(fd)
         self.nsamples=pickle.load(fd)
+        print('     nsamples ', self.nsamples)
         self.useweights=pickle.load(fd)
         self.__batchsize=pickle.load(fd)
         self.dataclass=pickle.load(fd)
@@ -531,7 +541,7 @@ class DataCollection(object):
         if nchilds<1: 
             nchilds=1
         
-        #nchilds=10
+        #nchilds=1   #For Debugging
         
         
         
@@ -664,7 +674,7 @@ class DataCollection(object):
         #helper class
         class tdreader(object):
             def __init__(self,filelist,maxopen,tdclass):
-                
+
                 self.filelist=filelist
                 self.nfiles=len(filelist)
                 self.max=min(maxopen,len(filelist))
@@ -681,7 +691,7 @@ class DataCollection(object):
                 self.shuffleseed=0
                 
             def start(self):
-                
+                print('read ', self.max,' files')
                 for i in range(self.max):
                     self.__readNext()
                     time.sleep(1)
@@ -692,8 +702,10 @@ class DataCollection(object):
                 #make sure this fast function has exited before getLast tries to read the file
                 import copy
                 readfilename=self.filelist[self.filecounter]
+
                 if len(filelist)>1:
                     self.tdlist[self.nextcounter].clear()
+
                 self.tdlist[self.nextcounter]=copy.deepcopy(self.tdclass)
                 self.tdlist[self.nextcounter].readthread=None
                 
@@ -714,8 +726,11 @@ class DataCollection(object):
                             traceback.print_exc(file=sys.stdout)
                             raise d
                     
-                t=threading.Thread(target=startRead, args=(self.nextcounter,readfilename,self.shuffleseed))    
+                t=threading.Thread(target=startRead, args=(self.nextcounter,readfilename,self.shuffleseed))
                 t.start()
+
+                #startRead(self.nextcounter,readfilename,self.shuffleseed) #Debug
+
                 self.shuffleseed+=1
                 if self.shuffleseed>1e5:
                     self.shuffleseed=0
@@ -788,7 +803,7 @@ class DataCollection(object):
         filelist=[]
         for s in self.samples:
             filelist.append(self.getSamplePath(s))
-        
+        print('filelist: ', filelist)
         TDReader=tdreader(filelist, self.maxFilesOpen, self.dataclass)
         
         #print('generator: total batches '+str(totalbatches))
@@ -802,13 +817,15 @@ class DataCollection(object):
         #  check if really the right ones are read....
         #
         psamples=0 #for random shuffling
+        print('start looping...')
         while 1:
             if processedbatches == totalbatches:
+                print('reset processedbatches to 0')
                 processedbatches=0
             
             lastbatchrest=0
             if processedbatches == 0: #reset buffer and start new
-                #print('DataCollection: new turnaround')
+                print('DataCollection: new turnaround')
                 xstored=[numpy.array([])]
                 dimx=0
                 ystored=[]
@@ -842,7 +859,7 @@ class DataCollection(object):
                     continue
                 
                 if xstored[0].shape[0] ==0:
-                    #print('dc:read direct') #DEBUG
+                    print('dc:read direct') #DEBUG
                     xstored=td.x
                     dimx=len(xstored)
                     ystored=td.y
@@ -863,8 +880,10 @@ class DataCollection(object):
                         
                 else:
                     
+
                     #randomly^2 shuffle - not needed anymore here
                     if psamples%2==0:
+
                         for i in range(0,dimx):
                             td.x[i]=shuffle(td.x[i], random_state=psamples)
                         for i in range(0,dimy):
@@ -907,7 +926,7 @@ class DataCollection(object):
                 
             if batchcomplete:
                 
-                #print('batch complete, split')#DEBUG
+                #print('batch complete, split')  #DEBUG
                 
                 for i in range(0,dimx):
                     splitted=numpy.split(xstored[i],[self.__batchsize])
@@ -950,7 +969,25 @@ class DataCollection(object):
             
             #yout[1]=numpy.zeros(self.__batchsize) #DEBUG
             #yout[1]=(yout[1].reshape(yout[1].shape[0],1))
-            
+
+            # print("xout = ", xout) #debug
+            #for i in yout:
+            #    self.sumy = self.sumy + i
+            #print(len(yout), " y outputs wich sum up to ", self.sumy) #debug
+            # print("wout = ", wout) #debug
+
+
+
+
+            sumy = 0
+            for i in range(len(yout[0])):
+                sumy += yout[0][i]
+            sumy[0] /= len(yout[0])
+
+            print(sumy[0])
+
+
+
             if self.useweights:
                 yield (xout,yout,wout)
             else:

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="141ae7df-70c0-49c8-bca5-9894b37ad193" name="lxplus" url="http://lxplus.cern.ch">
+        <fileTransfer host="lxplus.cern.ch" port="22" rootFolder="/afs/cern.ch/work/d/dwalter/DeepJet/" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="3f47f266-e1e9-4213-b236-716664c09cc0" name="deepthought" url="http://ekpdeepthought">
+        <fileTransfer host="ekpdeepthought" port="22" privateKey="$USER_HOME$/.ssh/id_rsa" rootFolder="/local/scratch/ssd1/dwalter/DeepGPU/" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
