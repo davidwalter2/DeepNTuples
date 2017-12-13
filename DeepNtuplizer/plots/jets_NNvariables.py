@@ -1,5 +1,5 @@
 #########
-# Compare Jets from MiniAOD with Jets from DeepNtuplizer
+# Plot several variable distributions of Jets from DeepNtuplizer
 #########
 import pdb
 import ROOT
@@ -13,11 +13,14 @@ class HistStacks:
         self.dataHist = []
         self.minY = 0
         self.maxY = 0
-        self.legX = 0.59
-        self.legY = 0.49
+        self.legX = 0.65
+        self.legY = 0.6
         self.setDefault = True
         self.name = name
         self.stack = ROOT.THStack("stack_"+self.name, "stack of "+self.name+" hists")
+
+        self.labelX = ''
+        self.labelY = ''
 
     def addHist(self, hist):
         self.hists.append(hist)
@@ -38,6 +41,10 @@ class HistStacks:
         self.legX = x
         self.legY = y
 
+    def setlabelXY(self, x = '', y = ''):
+        self.labelX = x
+        self.labelY = y
+
     def removeStatusBoxes(self):
         self.dataHist.SetStats(ROOT.kFALSE)
         for hist in self.hists:
@@ -48,19 +55,27 @@ class HistStacks:
         self.removeStatusBoxes()
         self.makeStack()
 
-        leg = ROOT.TLegend(self.legX, self.legY, self.legX + 0.2, self.legY + 0.4)
+        leg = ROOT.TLegend(self.legX, self.legY, self.legX + 0.15, self.legY + 0.25)
         leg.SetBorderSize(0)
         leg.SetTextFont(42)
         leg.AddEntry(self.dataHist, "data", "lep")
-        leg.AddEntry(self.hists[0], "t#bar{t}", "f")
-        leg.AddEntry(self.hists[1], "DY", "f")
+        leg.AddEntry(self.hists[8], "t#bar{t}", "f")
+        leg.AddEntry(self.hists[7], "WJets", "f")
         leg.AddEntry(self.hists[5], "VV", "f")
         leg.AddEntry(self.hists[3], "Wt/W#bar{t}", "f")
-        leg.AddEntry(self.hists[8], "WJets", "f")
+        leg.AddEntry(self.hists[1], "DY", "f")
 
+
+
+        self.dataHist.SetMinimum(0)
         if not self.setDefault:
             self.dataHist.SetMinimum(self.minY)
             self.dataHist.SetMaximum(self.maxY)
+
+        self.dataHist.GetXaxis().SetTitle(self.labelX)
+        self.dataHist.GetYaxis().SetTitle(self.labelY)
+        self.dataHist.SetMarkerStyle(ROOT.kFullDotLarge)
+        self.dataHist.SetMarkerSize(0.5)
 
         canvas = ROOT.TCanvas()
         self.dataHist.Draw("AXIS")
@@ -93,15 +108,15 @@ class Source:
         self.rootfile = ROOT.TFile(self.name+"_0.root")
         self.tree = self.rootfile.Get("deepntuplizer/tree")
 
-        self.hist_jet_pt = ROOT.TH1F("jet_pt_"+self.name, "pt of "+self.name+" jets", 50, 0, 700)
-        self.hist_jet_eta = ROOT.TH1F("jet_eta_"+self.name, "eta of "+self.name+" jets", 50,-2.5,2.5)
-        self.hist_nCpfcand = ROOT.TH1F("nCpfcand"+self.name, "number of charged particles in "+self.name, 50,-0.5,49.5)
-        self.hist_nNpfcand = ROOT.TH1F("nNpfcand"+self.name, "number of neutral particles in "+self.name, 50,-0.5,49.5)
-        self.hist_Cpfcan_ptrel = ROOT.TH1F("Cpfcan_ptrel"+self.name, "pt of charged particles in "+self.name, 30,-1.5,0.5)
+        self.hist_jet_pt = ROOT.TH1F("jet_pt_"+self.name, "pt of "+self.name+" jets", 40, 0, 350)
+        self.hist_jet_eta = ROOT.TH1F("jet_eta_"+self.name, "eta of "+self.name+" jets", 40,-2.4,2.4)
+        self.hist_nCpfcand = ROOT.TH1F("nCpfcand"+self.name, "number of charged particles in "+self.name, 40,-0.5,39.5)
+        self.hist_nNpfcand = ROOT.TH1F("nNpfcand"+self.name, "number of neutral particles in "+self.name, 40,-0.5,39.5)
+        self.hist_Cpfcan_ptrel = ROOT.TH1F("Cpfcan_ptrel"+self.name, "pt of charged particles in "+self.name, 30,-1,-0.5)
         self.hist_nsv = ROOT.TH1F("nsv"+self.name, "number of secondary vertices "+self.name, 5,-0.5,4.5)
         self.hist_npv = ROOT.TH1F("npv"+self.name, "number of primary vertices "+self.name, 50,-.5,49.5)
-        self.hist_sv_ntracks = ROOT.TH1F("sv_ntracks"+self.name, "number of primary vertices "+self.name, 20,-.5,19.5)
-        self.hist_sv_pt = ROOT.TH1F("sv_pt"+self.name, "number of primary vertices "+self.name, 50,0,200)
+        self.hist_sv_ntracks = ROOT.TH1F("sv_ntracks"+self.name, "number of tracks in secondary vertice "+self.name, 11,-.5,10.5)
+        self.hist_sv_pt = ROOT.TH1F("sv_pt"+self.name, "number of primary vertices "+self.name, 40,0,150)
         self.hist_weights = ROOT.TH1F("jet_weight_"+self.name, "weight of "+self.name+" jets", 50, min_weight, max_weight)
 
 
@@ -200,7 +215,19 @@ class Source:
         cls.stack_sv_pt.setMinMax(0,70000)
         cls.stack_sv_ntracks.setMinMax(0,200000)
 
-        cls.stack_eta.setLegPos(0.4,0.2)
+        cls.stack_eta.setLegPos(0.15,0.6)
+
+        cls.stack_nsv.dataHist.GetXaxis().SetNdivisions(5)
+
+        cls.stack_pt.setlabelXY('pt_{jet}','events')
+        cls.stack_eta.setlabelXY('eta_{jet}','events')
+        cls.stack_nCpfcand.setlabelXY('# charged pf candidates','events')
+        cls.stack_nNpfcand.setlabelXY('# neutral pf candidates','events')
+        cls.stack_Cpfcan_ptrel.setlabelXY('rel. pt of charged pf candidates','events')
+        cls.stack_nsv.setlabelXY('# sv in Jet','events')
+        cls.stack_npv.setlabelXY('# pv in event','events')
+        cls.stack_sv_ntracks.setlabelXY('# tracks in sv','events')
+        cls.stack_sv_pt.setlabelXY('pt_{sv}','events')
 
         cls.stack_pt.drawStack()
         cls.stack_eta.drawStack()
@@ -217,29 +244,28 @@ class Source:
 
 ROOT.gROOT.SetBatch()           # don't pop up canvases
 ROOT.gROOT.SetStyle('Plain')    # white background
-#ROOT.gStyle.SetFillStyle(0)     # TPave objects (e.g. legend) are transparent
-
+ROOT.gStyle.SetFillStyle(0)    # TPave objects (e.g. legend) are transparent
+ROOT.gStyle.SetOptTitle(0)      # no title
+ROOT.TGaxis.SetMaxDigits(4)     # Force scientific notation for numbers with more than 4 digits
 ROOT.gStyle.SetTextFont(42)
 ROOT.gStyle.SetTitleFont(42, "t")
 ROOT.gStyle.SetTitleFont(42, "xyz")
 ROOT.gStyle.SetLabelFont(42, "xyz")
 
-globalScaleFactor = 0.8180639286773081
 
 data = Source("data", data=True)
-tt = Source("tt",ROOT.kRed, 0., 1.)
-dy50 = Source("dy50",ROOT.kBlue, -5.,5.)
+dy50 = Source("dy50",ROOT.kBlue, -5.,5.)      #632
 dy10to50 = Source("dy10to50",ROOT.kBlue, -25.,25.)
-wantit = Source("wantit",ROOT.kMagenta,0.,1.)
+wantit = Source("wantit",ROOT.kMagenta,0.,1.)                #797
 wt = Source("wt",ROOT.kMagenta,0.,1.)
-ww = Source("ww",ROOT.kYellow)
+ww = Source("ww",ROOT.kYellow)      #800
 wz = Source("wz",ROOT.kYellow)
 zz = Source("zz",ROOT.kYellow)
-wjets = Source("wjets",ROOT.kGreen,-1000,1000)
+wjets = Source("wjets",ROOT.kGreen,-1000,1000) #
+tt = Source("tt",ROOT.kRed, 0., 1.)
+
 
 print("total number on Jets in MC ", Source.getN_MC(), " and in Data ", Source.getN_Data(), " (Data-MC)/Data) ", (Source.getN_Data() - Source.getN_MC())/Source.getN_Data())
-
-
 
 print("make directory and save plots")
 directory = os.path.dirname('./plots_jets/')

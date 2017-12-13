@@ -14,10 +14,13 @@ class HistStacks:
         self.minY = 0
         self.maxY = 0
         self.legX = 0.59
-        self.legY = 0.49
+        self.legY = 0.45
         self.setDefault = True
         self.name = name
-        self.stack = ROOT.THStack("stack_"+self.name, "jets with label "+self.name)
+        self.stack = ROOT.THStack("stack_"+self.name,"")
+
+        self.labelX = ''
+        self.labelY = ''
 
     def addHist(self, hist):
         self.hists.append(hist)
@@ -34,6 +37,10 @@ class HistStacks:
         self.maxY = max
         self.setDefault = False
 
+    def setlabelXY(self, x = '', y = ''):
+        self.labelX = x
+        self.labelY = y
+
     def setLegPos(self, x,y):
         self.legX = x
         self.legY = y
@@ -46,18 +53,20 @@ class HistStacks:
 
     def drawStack(self):
 
+
+
         self.removeStatusBoxes()
         self.makeStack()
 
-        leg = ROOT.TLegend(self.legX, self.legY, self.legX + 0.2, self.legY + 0.4)
+        leg = ROOT.TLegend(self.legX, self.legY, self.legX + 0.15, self.legY + 0.25)
         leg.SetBorderSize(0)
         leg.SetTextFont(42)
         #leg.AddEntry(self.dataHist, "data", "lep")
-        leg.AddEntry(self.hists[0], "t#bar{t}", "f")
-        leg.AddEntry(self.hists[1], "DY", "f")
+        leg.AddEntry(self.hists[8], "t#bar{t}", "f")
+        leg.AddEntry(self.hists[7], "WJets", "f")
         leg.AddEntry(self.hists[5], "VV", "f")
         leg.AddEntry(self.hists[3], "Wt/W#bar{t}", "f")
-        leg.AddEntry(self.hists[8], "WJets", "f")
+        leg.AddEntry(self.hists[1], "DY", "f")
 
         if not self.setDefault:
             self.dataHist.SetMinimum(self.minY)
@@ -65,6 +74,11 @@ class HistStacks:
 
         canvas = ROOT.TCanvas()
         self.stack.Draw("HIST")
+        self.stack.GetXaxis().SetTitle(self.labelX)
+        self.stack.GetYaxis().SetTitle(self.labelY)
+
+        self.stack.GetXaxis().SetNdivisions(2)
+
         leg.Draw("same")
         ROOT.gPad.RedrawAxis()      #draw axis in foreground
         canvas.Print("stack_"+self.name+".png")
@@ -137,6 +151,7 @@ class Source:
 
         self.setHistColor(color)
 
+
         self.scaleHists(0.8180639286773081)
 
 
@@ -151,6 +166,10 @@ class Source:
     def scaleHists(self,factor):
         for hist in self.hists:
             hist.Scale(factor)
+
+    def normHists(self):
+        for hist in self.hists:
+            hist.Scale(1./hist.Integral())
 
     def draw_all(self):
         i = 0
@@ -168,8 +187,12 @@ class Source:
     @classmethod
     def draw_stacks(cls):
 
-        cls.stack_isB.setLegPos(0.2,0.2)
+        cls.stack_isB.removeStatusBoxes()
+
+        cls.stack_isB.setLegPos(0.65,0.625)
         cls.stack_isWithB.setLegPos(0.6,0.2)
+
+        cls.stack_isB.setlabelXY('isB','events')
 
         cls.stack_isB.drawStack()
         cls.stack_isWithB.drawStack()
@@ -189,16 +212,15 @@ ROOT.gStyle.SetTitleFont(42, "xyz")
 ROOT.gStyle.SetLabelFont(42, "xyz")
 
 
-#data = Source("data", data=True)
-tt = Source("tt",ROOT.kRed)
-dy50 = Source("dy50",ROOT.kBlue)
+dy50 = Source("dy50",ROOT.kBlue)            #632
 dy10to50 = Source("dy10to50",ROOT.kBlue)
-wantit = Source("wantit",ROOT.kMagenta)
+wantit = Source("wantit",ROOT.kMagenta)     #797
 wt = Source("wt",ROOT.kMagenta)
-ww = Source("ww",ROOT.kYellow)
+ww = Source("ww",ROOT.kYellow)              #800
 wz = Source("wz",ROOT.kYellow)
 zz = Source("zz",ROOT.kYellow)
-wjets = Source("wjets",ROOT.kGreen)
+wjets = Source("wjets",ROOT.kGreen)         #
+tt = Source("tt",ROOT.kRed)
 
 
 print("make directory and save plots")

@@ -49,9 +49,9 @@ private:
     float  Cpfcan_etarel_[max_pfcand_];
     float  Cpfcan_deltaR_[max_pfcand_];
     float  Cpfcan_puppiw_[max_pfcand_];
-    float   Cpfcan_VTX_ass_[max_pfcand_];
+    float  Cpfcan_VTX_ass_[max_pfcand_];
 
-    float   Cpfcan_fromPV_[max_pfcand_];
+    float Cpfcan_fromPV_[max_pfcand_];
 
     float Cpfcan_vertexChi2_[max_pfcand_];
     float Cpfcan_vertexNdof_[max_pfcand_];
