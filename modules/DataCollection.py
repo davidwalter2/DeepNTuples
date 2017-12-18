@@ -410,7 +410,7 @@ class DataCollection(object):
         
         
     
-    def __writeData(self,sample,means, weighter,outputDir,dataclass):
+    def __writeData(self,sample,means, weighter,outputDir,dataclass,number=-1):
         import os
         import copy
         from stopwatch import stopwatch
@@ -430,6 +430,8 @@ class DataCollection(object):
         try:
             td.readFromRootFile(ramdisksample,means, weighter) 
             newname=os.path.basename(sample).rsplit('.', 1)[0]
+            if number>0:
+                newname+=str(number)
             
             if usenewformat:
                 newname+='.meta'
@@ -471,7 +473,6 @@ class DataCollection(object):
             sw=stopwatch()
             td=copy.deepcopy(self.dataclass)
             sample=self.originRoots[index]
-            fileTimeOut(sample,120) #once available copy to ram
             ramdisksample= tempstoragepath+'/'+str(os.getpid())+os.path.basename(sample)
             
             def removefile():
@@ -483,6 +484,8 @@ class DataCollection(object):
             out_samplename=''
             out_sampleentries=0
             newname=os.path.basename(sample).rsplit('.', 1)[0]
+            newname+=str(index)
+                
             if usenewformat:
                 newname+='.meta'
             else:
@@ -492,6 +495,7 @@ class DataCollection(object):
             
             
             try:
+                fileTimeOut(sample,120) #once available copy to ram
                 os.system('cp '+sample+' '+ramdisksample)
                 td.readFromRootFile(ramdisksample,self.means, self.weighter) 
                 #wrlck.acquire()
@@ -818,10 +822,12 @@ class DataCollection(object):
         #
         psamples=0 #for random shuffling
         print('start looping...')
+        nepoch=0
         while 1:
             if processedbatches == totalbatches:
                 print('reset processedbatches to 0')
                 processedbatches=0
+                nepoch+=1
             
             lastbatchrest=0
             if processedbatches == 0: #reset buffer and start new
@@ -881,9 +887,8 @@ class DataCollection(object):
                 else:
                     
 
-                    #randomly^2 shuffle - not needed anymore here
-                    if psamples%2==0:
-
+                    #randomly^2 shuffle - not needed every time
+                    if psamples%2==0 and nepoch%2==1:
                         for i in range(0,dimx):
                             td.x[i]=shuffle(td.x[i], random_state=psamples)
                         for i in range(0,dimy):

@@ -20,7 +20,6 @@ class training_base(object):
     def __init__(self, 
 
                  splittrainandtest=0.9,
-
                  useweights=False,
                  testrun=False,resumeSilently=False):
         
@@ -97,7 +96,7 @@ class training_base(object):
         self.train_data.useweights=useweights
         
         if testrun:
-            self.train_data.split(0.02)
+            self.train_data.split(0.002)
             
         self.val_data=self.train_data.split(splittrainandtest)
         
