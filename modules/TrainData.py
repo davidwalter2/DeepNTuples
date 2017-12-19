@@ -117,7 +117,7 @@ class TrainData(object):
         
         self.treename="deepntuplizer/tree"
         
-        self.undefTruth=['isUndefined']
+        self.undefTruth=['isUndefined', 'isTau']
         
         self.referenceclass='isB'
         
@@ -774,6 +774,33 @@ class TrainData(object):
         #print('took in total ', swall.getAndReset(),' seconds for conversion')
         
         return weights,x_all,alltruth, notremoves
+
+    def _normalize_input_(self, weighter, npy_array):
+        weights = None
+        if self.weight:
+            weights=weighter.getJetWeights(npy_array)
+            self.w = [weights for _ in self.y]
+        elif self.remove:
+            notremoves=weighter.createNotRemoveIndices(npy_array)
+            undef=npy_array['isUndefined']
+            notremoves-=undef
+            print(' to created remove indices')
+            weights=notremoves
+
+            print('remove')
+            self.x = [x[notremoves > 0] for x in self.x]
+            self.y = [y[notremoves > 0] for y in self.y]
+            weights=weights[notremoves > 0]
+            self.w = [weights for _ in self.y]
+            newnsamp=self.x[0].shape[0]
+            print('reduced content to ', int(float(newnsamp)/float(self.nsamples)*100),'%')
+            self.nsamples = newnsamp
+        else:
+            print('neither remove nor weight')
+            weights=numpy.empty(self.nsamples)
+            weights.fill(1.)
+            self.w = [weights for _ in self.y]        
+
         
 
 from preprocessing import MeanNormApply, MeanNormZeroPad
