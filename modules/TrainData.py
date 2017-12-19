@@ -123,17 +123,21 @@ class TrainData(object):
         
         self.truthclasses=['isB','isBB','isGBB','isLeptonicB','isLeptonicB_C','isC','isCC',
                            'isGCC','isUD','isS','isG','isUndefined']
-        
+
+        self.eventweightbranch = ['jet_weight']
+
         self.allbranchestoberead=[]
         
         #standard branches
         self.registerBranches(self.undefTruth)
         self.registerBranches(self.truthclasses)
         self.registerBranches(['jet_pt','jet_eta'])
-        
+        self.registerBranches(self.eventweightbranch)
+
+
         self.weightbranchX='jet_pt'
         self.weightbranchY='jet_eta'
-        
+
         self.weight_binX = numpy.array([
                 10,25,30,35,40,45,50,60,75,100,
                 125,150,175,200,250,300,400,500,

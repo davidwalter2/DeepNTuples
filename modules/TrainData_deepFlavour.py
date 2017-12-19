@@ -169,6 +169,7 @@ class TrainData_deepFlavour_FT(TrainData_fullTruth):
         
         print(x_global.shape,self.nsamples)
 
+
         self.w=[weights]
         self.x=[x_global,x_cpf,x_npf,x_sv]
         self.y=[alltruth]
@@ -184,6 +185,8 @@ class TrainData_deepFlavour_FT_reg(TrainData_fullTruth):
         Constructor
         '''
         TrainData_fullTruth.__init__(self)
+
+        print("init traindataaaa")
         
         
         self.addBranches(['jet_pt', 'jet_eta',
@@ -319,7 +322,7 @@ class TrainData_deepFlavour_FT_reg(TrainData_fullTruth):
             print('neither remove nor weight')
             weights=numpy.empty(self.nsamples)
             weights.fill(1.)
-        
+
         
         truthtuple =  Tuple[self.truthclasses]
         #print(self.truthclasses)
@@ -341,7 +344,9 @@ class TrainData_deepFlavour_FT_reg(TrainData_fullTruth):
         newnsamp=x_global.shape[0]
         print('reduced content to ', int(float(newnsamp)/float(self.nsamples)*100),'%')
         self.nsamples = newnsamp
-        
+
+
+
         print(x_global.shape,self.nsamples)
 
         self.w=[weights,weights]
@@ -427,8 +432,10 @@ class TrainData_deepFlavour_FT_reg_noScale(TrainData_deepFlavour_FT_reg):
         #print(self.truthclasses)
         alltruth=self.reduceTruth(truthtuple)
         
-        
-        
+        eventweights = Tuple[self.eventweightbranch].astype(float)
+        #print('eventweights are: ', eventweights)
+
+
         #print(alltruth.shape)
         if self.remove:
             print('remove')
@@ -448,7 +455,9 @@ class TrainData_deepFlavour_FT_reg_noScale(TrainData_deepFlavour_FT_reg):
         
         print(x_global.shape,self.nsamples)
 
-        self.w=[weights,weights]
+        #print('weights are: ', weights)
+
+        self.w=[weights*eventweights,weights*eventweights]
         self.x=[x_global,x_cpf,x_npf,x_sv,reco_pt]
         self.y=[alltruth,correctionfactor]
 
@@ -781,7 +790,7 @@ class TrainData_deepFlavour_FT_map(TrainData_deepFlavour_FT):
         
 
         x_map = numpy.concatenate((x_chmap,x_neumap,x_chcount,x_neucount), axis=3)
-        
+
         self.w=[weights]
         self.x=[x_global,x_cpf,x_npf,x_sv,x_map]
         self.y=[alltruth]
@@ -946,7 +955,7 @@ class TrainData_deepFlavour_FT_map_reg(TrainData_deepFlavour_FT_map):
         
 
         x_map = numpy.concatenate((x_chmap,x_neumap,x_chcount,x_neucount), axis=3)
-        
+
         self.w=[weights,weights]
         self.x=[x_global,x_cpf,x_npf,x_sv,x_map,regreco]
         self.y=[alltruth,regtruth]        
