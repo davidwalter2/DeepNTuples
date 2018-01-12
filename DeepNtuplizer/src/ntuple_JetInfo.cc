@@ -17,8 +17,12 @@
 
 #include <TFile.h>
 #include <TH1.h>
+#include <TH2.h>
+#include <TGraphAsymmErrors.h>
+
 
 using namespace std;
+
 
 void ntuple_JetInfo::getInput(const edm::ParameterSet& iConfig){
 
@@ -30,6 +34,17 @@ void ntuple_JetInfo::getInput(const edm::ParameterSet& iConfig){
 
     pupDataDir_ = (iConfig.getParameter<string>("pupDataDir"));
     pupMCDir_ = (iConfig.getParameter<string>("pupMCDir"));
+
+    //scale factor files
+    sfMuonIdDir_ = (iConfig.getParameter<string>("sfMuonIDFile"));
+    sfMuonIsoDir_ = (iConfig.getParameter<string>("sfMuonISOFile"));
+    sfMuonTrackingDir_ = (iConfig.getParameter<string>("sfMuonTrackingFile"));
+    sfElIdandIsoDir_ = (iConfig.getParameter<string>("sfElIDandISOFile"));
+
+    sfMuonIdName_ = (iConfig.getParameter<string>("sfMuonIDName"));
+    sfMuonIsoName_ = (iConfig.getParameter<string>("sfMuonISOName"));
+    sfMuonTrackingName_ = (iConfig.getParameter<string>("sfMuonTrackingName"));
+    sfElIdandIsoName_ = (iConfig.getParameter<string>("sfElIDandISOFile"));
 
     useLHEWeights_ = (iConfig.getParameter<bool>("useLHEWeights"));
     crossSection_ = (iConfig.getParameter<double>("crossSection"));
@@ -44,9 +59,27 @@ void ntuple_JetInfo::getInput(const edm::ParameterSet& iConfig){
 
     TFile *pupMCFile = new TFile(pupMCDir_.c_str());
     TFile *pupDataFile = new TFile(pupDataDir_.c_str());
+    TFile *sfMuonIdFile = new TFile(sfMuonIdDir_.c_str());
+    TFile *sfMuonIsoFile = new TFile(sfMuonIsoDir_.c_str());
+    TFile *sfMuonTrackingFile = new TFile(sfMuonTrackingDir_.c_str());
+    TFile *sfElIdandIsoFile = new TFile(sfElIdandIsoDir_.c_str());
+
 
     TH1F * pupMCHist = (TH1F*)pupMCFile->Get("pileup");
     TH1F * pupDataHist = (TH1F*)pupDataFile->Get("pileup");
+    sfMuonIdHist = (TH2F*)sfMuonIdFile->Get(sfMuonIdName_.c_str());
+    sfMuonIsoHist = (TH2F*)sfMuonIsoFile->Get(sfMuonIsoName_.c_str());
+    TGraphAsymmErrors * sfMuonTrackingGraph = (TGraphAsymmErrors*)sfMuonTrackingFile->Get(sfMuonTrackingName_.c_str());
+    sfElIdandIsoHist = (TH2F*)sfElIdandIsoFile->Get(sfElIdandIsoName_.c_str());
+
+
+    sfMuonIdHist_xaxis = sfMuonIdHist->GetXaxis();
+    sfMuonIdHist_yaxis = sfMuonIdHist->GetYaxis();
+    sfMuonIsoHist_xaxis = sfMuonIsoHist->GetXaxis();
+    sfMuonIsoHist_yaxis = sfMuonIsoHist->GetYaxis();
+    sfElIdandIsoHist_xaxis = sfElIdandIsoHist->GetXaxis();
+    sfElIdandIsoHist_yaxis = sfElIdandIsoHist->GetYaxis();
+
 
     pupMCHist->Scale(1./pupMCHist->Integral());
     pupDataHist->Scale(1./pupDataHist->Integral());
@@ -56,7 +89,40 @@ void ntuple_JetInfo::getInput(const edm::ParameterSet& iConfig){
         pupWeights.push_back(pupDataHist->GetBinContent(bin)/pupMCHist->GetBinContent(bin));
     }
 
+    ////get histogram out of graph
+    const int npoints = sfMuonTrackingGraph->GetN();
+    const double* x_centers = sfMuonTrackingGraph->GetX();
+    const double* y_centers = sfMuonTrackingGraph->GetY();
+    double x_lows[npoints];
+    double x_highs[npoints];
+//    double y_lows[npoints];
+//    double y_highs[npoints];
+    for(int i=0; i<npoints; ++i)
+    {
+        x_lows[i] = sfMuonTrackingGraph->GetErrorXlow(i);
+        x_highs[i] = sfMuonTrackingGraph->GetErrorXhigh(i);
+//        y_lows[i] = sfMuonTrackingGraph->GetErrorYlow(i);
+//        y_highs[i] = sfMuonTrackingGraph->GetErrorYhigh(i);
+    }
 
+    double x_edges[npoints+1];
+    for(int i=0; i<npoints; ++i)
+    {
+        x_edges[i] = x_centers[i] - x_lows[i];
+    }
+    x_edges[npoints] = x_centers[npoints-1] + x_highs[npoints-1];
+
+    sfMuonTrackingHist = new TH1D("sfMuonTrackingHist", "sfMuonTrackingHist", npoints, x_edges);
+//    (*sfMuonTrackingHist)->SetDirectory(0); // without this the histo will get deleted when a currently open TFile is closed
+    for(int i=0; i<npoints; ++i)
+    {
+//     cout << i << ":" << y_centers[i] << "+-" << max(y_lows[i], y_highs[i]) << endl;
+        sfMuonTrackingHist->SetBinContent(i+1, y_centers[i]);
+//        (*sfMuonTrackingHist)->SetBinError(i+1, max(y_lows[i], y_highs[i]));
+//      cout << (*h)->GetBinError(i) << endl;
+    }
+
+    sfMuonTrackingHist_axis = sfMuonTrackingHist->GetXaxis();
 
 }
 void ntuple_JetInfo::initBranches(TTree* tree){
@@ -316,7 +382,7 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
     }
     npv_ = vertices()->size();
 
-    if(!iEvent.isRealData()){  //extended pileup info only for gen jets
+    if(!iEvent.isRealData()){  //make pileup info and eventweights
         for (auto const& v : *pupInfo()) {
             int bx = v.getBunchCrossing();
             if (bx == 0) {
@@ -335,7 +401,6 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
         if(ntrueInt_ < pupWeights.size()){
             pupWeight = pupWeights.at(ntrueInt_);
         }
-
 
         jet_weight_ = luminosity_ *  crossSection_ * efficiency_ * lheWeight * pupWeight;
     }
@@ -365,6 +430,11 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
     muons_number_ = muIds.size();
     electrons_number_ = elecIds.size();
 
+    double leadingMuon_pt = 0.;
+    double leadingMuon_eta = 0.;
+    double leadingEl_pt = 0.;
+    double leadingEl_sueta = 0.;
+
     float etasign = 1.;
     if (jet.eta()<0) etasign = -1.;
 
@@ -379,6 +449,10 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
             muons_relEta_[i] = etasign*(muon.eta()-jet.eta());
             muons_relPhi_[i] = reco::deltaPhi(muon.phi(),jet.phi());
             muons_energy_[i] = muon.energy()/jet.energy();
+            if(muon.pt() > leadingMuon_pt){
+                leadingMuon_pt = muon.pt();
+                leadingMuon_eta = muon.eta();
+            }
         }
         if (i < elecIds.size()) {
             const auto & electron = (*electronsHandle).at(elecIds.at(i));
@@ -386,8 +460,48 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
             electrons_relEta_[i] = etasign*(electron.eta()-jet.eta());
             electrons_relPhi_[i] = reco::deltaPhi(electron.phi(),jet.phi());
             electrons_energy_[i] = electron.energy()/jet.energy();
+            if(electron.pt() > leadingEl_pt){
+                leadingEl_pt = electron.pt();
+                leadingEl_sueta = electron.superCluster()->eta();
+            }
         }
     }
+
+    //scalefactors
+    if(!iEvent.isRealData()){
+
+        //Muon ID
+        Int_t binx = sfMuonIdHist_xaxis->FindBin(std::abs(leadingMuon_eta));
+        Int_t biny = sfMuonIdHist_yaxis->FindBin(leadingMuon_pt);
+        if(leadingMuon_pt > 120.)   //dont take overflow bin, but the last one
+            biny -= 1;
+
+        jet_weight_ *= sfMuonIdHist->GetBinContent(binx, biny);
+
+        //Muon ISO
+        binx = sfMuonIsoHist_xaxis->FindBin(std::abs(leadingMuon_eta));
+        biny = sfMuonIsoHist_yaxis->FindBin(leadingMuon_pt);
+        if(leadingMuon_pt > 120.)
+            biny -= 1;
+
+        jet_weight_ *= sfMuonIsoHist->GetBinContent(binx, biny);
+
+        //MuonTracking
+        binx = sfMuonTrackingHist_axis->FindBin(std::abs(leadingMuon_eta));
+
+        jet_weight_ *= sfMuonTrackingHist->GetBinContent(binx, biny);
+
+        //ElectronIDandISO
+        binx = sfElIdandIsoHist_xaxis->FindBin(std::abs(leadingEl_sueta));
+        biny = sfElIdandIsoHist_yaxis->FindBin(leadingEl_pt);
+        if(leadingMuon_pt > 120.)
+            biny -= 1;
+
+        jet_weight_ *= sfElIdandIsoHist->GetBinContent(binx, biny);
+
+
+    }
+
 
     //// Note that jets with gluon->bb (cc) and x->bb (cc) are in the same categories
     isB_=0; isGBB_=0; isBB_=0; isC_=0; isGCC_=0; isCC_=0; isUD_=0; isTau_=0;
@@ -544,3 +658,4 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
 
     return returnval;
 }
+

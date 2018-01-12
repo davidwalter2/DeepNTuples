@@ -105,6 +105,8 @@ private:
 
     bool applySelection_;
     bool isData_;
+
+    std::vector<long> eventIDs;
 };
 
 DeepNtuplizer::DeepNtuplizer(const edm::ParameterSet& iConfig):
@@ -230,6 +232,18 @@ DeepNtuplizer::~DeepNtuplizer()
 void
 DeepNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+
+    if(iEvent.isRealData()){ //to avoid double counting
+
+        long eventID = iEvent.id().event();
+        if (std::find(eventIDs.begin(), eventIDs.end(), eventID) != eventIDs.end()){
+
+            std::cout<<"this event was already processed"<<std::endl;
+            return; //skip the event if it was already processed
+        }
+
+        eventIDs.push_back(eventID);
+    }
 
     //global info
 

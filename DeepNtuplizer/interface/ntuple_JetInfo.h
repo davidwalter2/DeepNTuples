@@ -12,6 +12,10 @@
 #include "TRandom3.h"
 #include <map>
 #include <string>
+#include <TFile.h>
+#include <TH1.h>
+#include <TH2.h>
+#include <TGraphAsymmErrors.h>
 
 #include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 
@@ -200,11 +204,36 @@ public:
     bool useLHEWeights_;
     std::string pupDataDir_;
     std::string pupMCDir_;
+
     std::vector<double> pupWeights;
     float crossSection_;
     float luminosity_;
     float efficiency_;
     float jet_weight_;
+
+    //scale factor variables
+    std::string sfMuonIdDir_;
+    std::string sfMuonIsoDir_;
+    std::string sfMuonTrackingDir_;
+    std::string sfElIdandIsoDir_;
+    std::string sfMuonIdName_;
+    std::string sfMuonIsoName_;
+    std::string sfMuonTrackingName_;
+    std::string sfElIdandIsoName_;
+
+    TH2F * sfMuonIdHist;
+    TH2F * sfMuonIsoHist;
+    TH2F * sfElIdandIsoHist;
+    TH1D * sfMuonTrackingHist;
+
+    TAxis *sfMuonIdHist_xaxis;
+    TAxis *sfMuonIdHist_yaxis;
+    TAxis *sfMuonIsoHist_xaxis;
+    TAxis *sfMuonIsoHist_yaxis;
+    TAxis *sfElIdandIsoHist_xaxis;
+    TAxis *sfElIdandIsoHist_yaxis;
+    TAxis *sfMuonTrackingHist_axis;
+
 
     float jet_looseId_;
 

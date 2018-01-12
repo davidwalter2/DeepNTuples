@@ -31,7 +31,7 @@ ROOT.gSystem.Load("libDataFormatsFWLite.so")
 ROOT.gSystem.Load("libDataFormatsPatCandidates.so")
 
 #files to load
-datafile = "data.txt"
+datafile = "data_full.txt"
 ttfilelist = "tt.txt"
 dy10to50file ="dy10to50.txt"
 dy50filelist = "dy50.txt"
@@ -41,11 +41,36 @@ zzfile = "zz.txt"
 wantitfilelist = "wantit.txt"
 wtfilelist = "wt.txt"
 wjetsfilelist = "wjets.txt"
+
+
 #pileup distributions
 file_pileup_MC = ROOT.TFile(
     "/afs/desy.de/user/d/dwalter/CMSSW_8_0_29/src/DeepNTuples/DeepNtuplizer/data/MyMCPileupHist.root")
 file_pileup_Data = ROOT.TFile(
     "/afs/desy.de/user/d/dwalter/CMSSW_8_0_29/src/DeepNTuples/DeepNtuplizer/data/MyDataPileupHist.root")
+
+hist_pileup_MC = file_pileup_MC.Get("pileup")
+hist_pileup_Data = file_pileup_Data.Get("pileup")
+
+# muon scalefactor hists from https://twiki.cern.ch/twiki/bin/viewauth/CMS/MuonWorkInProgressAndPagResults
+file_sf_muon_id_GH = ROOT.TFile(
+    "/afs/desy.de/user/d/dwalter/CMSSW_8_0_29/src/DeepNTuples/DeepNtuplizer/data/EfficienciesAndSF_ID_GH.root")
+file_sf_muon_iso_GH = ROOT.TFile(
+    "/afs/desy.de/user/d/dwalter/CMSSW_8_0_29/src/DeepNTuples/DeepNtuplizer/data/EfficienciesAndSF_ISO_GH.root")
+file_sf_muon_tracking = ROOT.TFile(
+    "/afs/desy.de/user/d/dwalter/CMSSW_8_0_29/src/DeepNTuples/DeepNtuplizer/data/Tracking_EfficienciesAndSF_BCDEFGH.root"
+)
+# electron scalefactor hists from https://twiki.cern.ch/twiki/bin/view/CMS/EgammaIDRecipesRun2
+#   -> Electron cut-based 80XID WPs. Scale factors for 80X ->  Tight cut-based ID WP scale factor (root file)
+#   id and iso is combined in one file, there is no tracking for the electron
+file_sf_el_id = ROOT.TFile(
+    "/afs/desy.de/user/d/dwalter/CMSSW_8_0_29/src/DeepNTuples/DeepNtuplizer/data/egammaEffi.txt_EGM2D.root"
+)
+
+h_sf_muon_id_GH = file_sf_muon_id_GH.Get("MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/abseta_pt_ratio")
+h_sf_muon_iso_GH = file_sf_muon_iso_GH.Get("TightISO_TightID_pt_eta/abseta_pt_ratio")
+g_sf_muon_tracking = file_sf_muon_tracking.Get("ratio_eff_aeta_dr030e030_corr")
+h_sf_el_id = file_sf_el_id.Get("EGamma_SF2D")
 
 
 print("create handles")
@@ -63,7 +88,7 @@ electronlabel = ("GoodElectron")
 ### Jets
 jethandle = Handle('vector<pat::Jet>')
 #jetlabel = ("GoodJets")
-jetlabel = ("slimmedJets")
+jetlabel = ("GoodJets")
 
 ### LHE weights
 LHEweighthandle = Handle('LHEEventProduct')
@@ -166,9 +191,80 @@ hs_j_n = ROOT.THStack("hs", "jet number")
 
 hs = hs_ll_pt, hs_ll_eta, hs_tl_pt, hs_tl_eta, hs_j_n
 
-# load pileup histograms for pileup reweighting
-hist_pileup_MC = file_pileup_MC.Get("pileup")
-hist_pileup_Data = file_pileup_Data.Get("pileup")
+
+
+class scaleFactor():
+    """
+     class for isolation and id scale factors
+     hist is the 2d histogram with the scale factor with abs(eta) on x and pt on y
+    """
+    def __init__(self,hist):
+        self.hist = hist
+        self.xaxis = self.hist.GetXaxis()
+        self.yaxis = self.hist.GetYaxis()
+        self.binx = 0
+        self.biny = 0
+        self.scalefactor = 1.
+        self.maxBinX = self.xaxis.GetLast()
+        self.maxBinY = self.yaxis.GetLast()
+        self.minPt = self.xaxis.GetXmin()
+        self.maxPt = self.xaxis.GetXmax()
+        self.minEta = self.yaxis.GetXmin()
+        self.maxEta = self.yaxis.GetXmax()
+
+    def getScalefactor(self,abseta,pt):
+
+        self.binx = self.xaxis.FindBin(abseta)
+        self.biny = self.yaxis.FindBin(pt)
+
+        if pt >= self.maxPt: self.biny = self.maxBinY
+
+        self.scalefactor = self.hist.GetBinContent(self.binx, self.biny)
+        return self.scalefactor
+
+class scaleFactor_tracking():
+    """
+     class for tracking scale factors
+     the tracking scale factors are saved in a TGraphAsymmErrors object which has to be written in a histogram first
+    """
+    def __init__(self,graph, name):
+        self.graph = graph
+        self.npoints = self.graph.GetN()
+        self.x_centers = self.graph.GetX()
+        self.y_centers = self.graph.GetY()
+        self.x_lows = np.zeros(self.npoints)
+        self.x_highs = np.zeros(self.npoints)
+        self.y_lows = np.zeros(self.npoints)
+        self.y_highs = np.zeros(self.npoints)
+        self.x_edges = np.zeros(self.npoints +1)
+
+        for i in range(0,self.npoints):
+            self.x_lows[i] = self.graph.GetErrorXlow(i)
+            self.x_highs[i] = self.graph.GetErrorXhigh(i)
+            self.y_lows[i] = self.graph.GetErrorYlow(i)
+            self.y_lows[i] = self.graph.GetErrorYhigh(i)
+
+            self.x_edges[i] = self.x_centers[i] - self.x_lows[i]
+        self.x_edges[self.npoints] = self.x_centers[self.npoints - 1] + self.x_highs[self.npoints-1]
+
+        self.hist = ROOT.TH1D(name, name,self.npoints,self.x_edges)
+
+        for i in range(0,self.npoints):
+            self.hist.SetBinContent(i+1, self.y_centers[i])
+            self.hist.SetBinError(i+1, max(self.y_lows[i], self.y_highs[i]))
+
+        self.bin = 0
+        self.axis = self.hist.GetXaxis()
+        self.scalefactor = 1.
+
+
+    def getScalefactor(self,eta):
+
+        self.bin = self.axis.FindBin(abs(eta))
+
+        self.scalefactor = self.hist.GetBinContent(self.bin)
+        return self.scalefactor
+
 
 
 
@@ -205,7 +301,7 @@ def getPileupWeight(nInteractions):
     return pupWeights[nInteractions]
 
 
-def fillHists(hists, infile, islist = True, useLHEWeights = False, isData = False):
+def fillHists(hists, infile, islist = True, useLHEWeights = False, isData = False, eventIDs = []):
     print("start to fill hist: " + str(datetime.datetime.now()))
     nevents = 0
     directory = ''
@@ -225,41 +321,37 @@ def fillHists(hists, infile, islist = True, useLHEWeights = False, isData = Fals
 
 ### EVENT LOOP
         for event in events:
+            eventID = event.eventAuxiliary().event()
+
+            if isData:      #avoid double counting
+                if eventID in eventIDs:
+                    #print("this event was already processed")
+                    continue
+                eventIDs = np.append(eventIDs,eventID)
+
             nevents += 1
             leadingPt = 10
             leadingEta = 0
             trailingPt = 10
             trailingEta = 0
+            leadingMuonPt = 10
+            leadingMuonEta = 0
+            leadingElPt = 10
+            leadingElEta = 0
+            leadingElSuEta = 0
             weight = 1.
 
-            if useLHEWeights == True:
-                event.getByLabel( LHEweightlabel, LHEweighthandle )
-                weights = LHEweighthandle.product()
-                weight = weights.weights()[0].wgt/abs(weights.weights()[0].wgt)
-                #pdb.set_trace()
-                #print("lhe weights ...")
-                #for w in weights.weights():
-                #    print(w.id, w.wgt)
-            if isData == False:
-                event.getByLabel(puplabel, puphandle)
-                pupInfos = puphandle.product()
-                for pupInfo in pupInfos:
-                    if(pupInfo.getBunchCrossing() == 0):
-                        weight *= getPileupWeight(int(pupInfo.getTrueNumInteractions()))
-
-
-
+            #pdb.set_trace()
+            #print("stop")
 
             # Fill muon hists
             event.getByLabel(muonlabel, muonhandle)
             muons = muonhandle.product()    # get the product
 
             for muon in muons:
-
-                if muon.pt() > leadingPt:
-                    leadingPt = muon.pt()
-                    leadingEta = muon.eta()
-
+                if muon.pt() > leadingMuonPt:
+                    leadingMuonPt = muon.pt()
+                    leadingMuonEta = muon.eta()
 
 
             # Fill electron hists
@@ -267,15 +359,21 @@ def fillHists(hists, infile, islist = True, useLHEWeights = False, isData = Fals
             electrons = electronhandle.product()
             for electron in electrons:
 
-                if electron.pt() > leadingPt:
-                    trailingPt = leadingPt
-                    leadingPt = electron.pt()
-                    trailingEta = leadingEta
-                    leadingEta = electron.eta()
-                elif electron.pt() > trailingPt:
-                    trailingPt = electron.pt()
-                    trailingEta = electron.eta()
+                if electron.pt() > leadingElPt:
+                    leadingElPt = electron.pt()
+                    leadingElEta = electron.eta()
+                    leadingElSuEta = electron.superCluster().eta()
 
+            if leadingMuonPt > leadingElPt:
+                leadingPt = leadingMuonPt
+                leadingEta = leadingMuonEta
+                trailingPt = leadingElPt
+                trailingEta = leadingElEta
+            else:
+                leadingPt = leadingElPt
+                leadingEta = leadingElEta
+                trailingPt = leadingMuonPt
+                trailingEta = leadingMuonEta
 
 
             hists[0].Fill(leadingPt, weight)
@@ -289,6 +387,26 @@ def fillHists(hists, infile, islist = True, useLHEWeights = False, isData = Fals
 
             numJets = len(jets)
             hists[4].Fill(numJets, weight)
+
+
+
+            #Compute Event weights
+            if useLHEWeights == True:
+                event.getByLabel( LHEweightlabel, LHEweighthandle )
+                weights = LHEweighthandle.product()
+                weight = weights.weights()[0].wgt/abs(weights.weights()[0].wgt)
+
+            if isData == False:
+                event.getByLabel(puplabel, puphandle)
+                pupInfos = puphandle.product()
+                for pupInfo in pupInfos:
+                    if(pupInfo.getBunchCrossing() == 0):
+                        weight *= getPileupWeight(int(pupInfo.getTrueNumInteractions()))
+
+                weight *= sf_muon_id_GH.getScalefactor(abs(leadingMuonEta), leadingMuonPt)
+                weight *= sf_muon_iso_GH.getScalefactor(abs(leadingMuonEta), leadingMuonPt)
+                weight *= sf_muon_tracking.getScalefactor(abs(leadingMuonEta))
+                weight *= sf_el_id.getScalefactor(abs(leadingElSuEta), leadingElPt)
 
             if isData == False:             #Weight of data event is always 1
                 hist_weights.Fill(weight)
@@ -344,21 +462,41 @@ def makeStacks(hs, hists_list):
 
 def makeDataPlots(hists, name="data"):
     for i in range(0,len(hists)):
+        hists[i].SetMinimum(0)
         canvas = ROOT.TCanvas("name"+str(i), "title"+str(i),800,600)
         canvas.Clear()
+
+        str_integral = "Integral = "+ str(hists[4].Integral())
+
+        txt_integral = ROOT.TText(hists[i].GetBinLowEdge(0) + 0.3*(hists[i].GetBinLowEdge(hists[i].GetNbinsX())+hists[i].GetBinWidth(hists[i].GetNbinsX()) - hists[i].GetBinLowEdge(1)),
+                                  (hists[i].GetMaximum()-hists[i].GetMinimum())*0.05,str_integral)
+        txt_integral.SetTextFont(42)
+        txt_integral.SetTextSize(.03)
+
         hists[i].SetTitleFont(42,"t")
         hists[i].SetTitleFont(42,"xyz")
         hists[i].SetLabelFont(42,"xyz")
         hists[i].Draw("PE")
+        txt_integral.Draw("same")
         canvas.Print(name + "_" + str(i) + ".png")
 
 def makeMCPlots(hists, name="mc"):
     for i in range(0, len(hists)):
+        hists[i].SetMinimum(0)
         canvas = ROOT.TCanvas("name"+str(i), "title"+str(i),800,600)
+        str_integral = "Integral = "+ str(hists[4].Integral())
+
+        txt_integral = ROOT.TText(hists[i].GetBinLowEdge(0) + 0.3*(hists[i].GetBinLowEdge(hists[i].GetNbinsX())+hists[i].GetBinWidth(hists[i].GetNbinsX()) - hists[i].GetBinLowEdge(1)),
+                                  (hists[i].GetMaximum()-hists[i].GetMinimum())*0.05,str_integral)
+        txt_integral.SetTextFont(42)
+        txt_integral.SetTextSize(.03)
+
+
         hists[i].SetTitleFont(42,"t")
         hists[i].SetTitleFont(42,"xyz")
         hists[i].SetLabelFont(42,"xyz")
         hists[i].Draw("HIST")
+        txt_integral.Draw("same")
         canvas.Print(name + "_" + str(i) + ".png")
 
 def makeFullPlots(h_data,hs_mc, name="all"):
@@ -568,12 +706,19 @@ eff_wjets =      1./16497031        # effective number of events
 
 #printPilupInfo(hist_pileup_Data, hist_pileup_MC)
 
+eventIDs = np.array([])   #list of all event ids from the data events to avoid double counting, get filled in the event loop
+
+sf_muon_id_GH = scaleFactor(h_sf_muon_id_GH)
+sf_muon_iso_GH = scaleFactor(h_sf_muon_iso_GH)
+sf_muon_tracking = scaleFactor_tracking(g_sf_muon_tracking, "sf_muon_tracking")
+sf_el_id = scaleFactor(h_sf_el_id)
+
 pupWeights = makePileupWeights(hist_pileup_Data, hist_pileup_MC)
 
 plotPileupDistributions()
 printDiffList(hist_pileup_Data, hist_pileup_MC, "pileup_difference")
 
-fillHists(hists_data, infile=datafile, isData=True)
+fillHists(hists_data, infile=datafile, isData=True, eventIDs = eventIDs)
 fillHists(hists_tt, infile=ttfilelist)
 fillHists(hists_dy50, infile=dy50filelist, useLHEWeights =  True)      #only events from amcatnloFXFX generator have weights != 1
 fillHists(hists_dy10to50, infile=dy10to50file, useLHEWeights = True)
@@ -608,11 +753,16 @@ colorHists(hists_zz,        ROOT.kYellow)
 colorHists(hists_tt,        ROOT.kRed)
 colorHists(hists_wjets,     ROOT.kGreen)
 
-directory = os.path.dirname('./plots/')
+title='180111_SF'
+
+directory = os.path.dirname('./plots_'+title+'/')
 # make a canvas, draw, and save it
 if not os.path.exists(directory):
     os.makedirs(directory)
 os.chdir(directory)
+
+eventIDs = np.sort(eventIDs)
+np.savetxt("eventIDs.txt", eventIDs)
 
 print("draw and save")
 c1 = ROOT.TCanvas()
@@ -640,11 +790,11 @@ makeStacks(hs=hs, hists_list=histslist_mc)
 #scaleFactor = hists_data[0].Integral()/hist_sum_ll_pt.Integral()
 #print("overall scale factor ", scaleFactor)
 
-scaleFactor = 0.8180639286773081
+#scaleFactor = 0.8180639286773081
 
-for hists in histslist_mc:
-    for hist in hists:
-        hist.Scale(scaleFactor)
+#for hists in histslist_mc:
+#    for hist in hists:
+#        hist.Scale(scaleFactor)
 
 
 removeStatusBoxes(hists_data)
@@ -654,7 +804,25 @@ for hists in histslist_mc:
 
 makeFullPlots(h_data=hists_data, hs_mc=hs, name="all")
 
+f1 = ROOT.TFile(title+".root","RECREATE","PlotGauss")
+
+c1.Write()
+for hists in histslist_mc:
+    for hist in hists:
+        hist.Write
+for hist in hists_data:
+    hist.Write()
+for hist in hs:
+    hist.Write()
+
+f1.Close()
+
+
+
+
 print("finish at: " + str(datetime.datetime.now()))
+
+
 
 
 

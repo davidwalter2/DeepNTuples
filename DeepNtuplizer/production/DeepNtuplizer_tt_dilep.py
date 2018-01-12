@@ -12,7 +12,7 @@ import sys
 options = VarParsing.VarParsing()
 
 options.register('inputScript', '', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string,"input Script")
-options.register('config','tt',VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string,"config for the kind of process under investigation with parameters for deepntuplizer and the input file list")
+options.register('config','tt',VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string,"kind of process under investigation with parameters for deepntuplizer and the input file list")
 options.register('outputFile', 'output', VarParsing.VarParsing.multiplicity.singleton,VarParsing.VarParsing.varType.string, "output File (w/o .root)")
 options.register('maxEvents', -1, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int,"maximum events")
 options.register('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int,"skip N events")
