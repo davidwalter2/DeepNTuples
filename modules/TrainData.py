@@ -117,14 +117,15 @@ class TrainData(object):
         
         self.treename="deepntuplizer/tree"
         
-        self.undefTruth=['isUndefined', 'isTau']
+        self.undefTruth=['isUndefined']#, 'isTau']
         
         self.referenceclass='isB'
         
         self.truthclasses=['isB','isBB','isGBB','isLeptonicB','isLeptonicB_C','isC','isCC',
                            'isGCC','isUD','isS','isG','isUndefined']
 
-        self.eventweightbranch = ['jet_weight']
+        self.eventweightbranch = ['event_weight']
+        self.domainbranch = ['isRealData']
 
         self.allbranchestoberead=[]
         
@@ -133,6 +134,7 @@ class TrainData(object):
         self.registerBranches(self.truthclasses)
         self.registerBranches(['jet_pt','jet_eta'])
         self.registerBranches(self.eventweightbranch)
+        self.registerBranches(self.domainbranch)
 
 
         self.weightbranchX='jet_pt'
@@ -158,7 +160,7 @@ class TrainData(object):
         self.readthread=None
         self.readdone=None
         
-        self.remove=True    
+        self.remove=True
         self.weight=False
         
         self.clear()

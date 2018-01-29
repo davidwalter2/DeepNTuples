@@ -1,6 +1,7 @@
 #from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Convolution2D, merge, Convolution1D, Conv2D, LSTM, LocallyConnected2D
 from keras.models import Model
+import numpy as np
 import warnings
 warnings.warn("DeepJet_models.py is deprecated and will be removed! Please move to the models directory", DeprecationWarning)
 
@@ -361,6 +362,9 @@ class TrainData_deepFlavour_FT_reg_noScale(TrainData_deepFlavour_FT_reg):
         Constructor
         '''
         TrainData_deepFlavour_FT_reg.__init__(self)
+
+        #self.remove = False
+
         
     def readFromRootFile(self,filename,TupleMeanStd, weighter):
         from preprocessing import MeanNormApply, MeanNormZeroPad, MeanNormZeroPadParticles
@@ -369,6 +373,8 @@ class TrainData_deepFlavour_FT_reg_noScale(TrainData_deepFlavour_FT_reg):
         
         sw=stopwatch()
         swall=stopwatch()
+        #self.remove = False
+
         
         import ROOT
         
@@ -415,8 +421,8 @@ class TrainData_deepFlavour_FT_reg_noScale(TrainData_deepFlavour_FT_reg):
         
         if self.remove:
             notremoves=weighter.createNotRemoveIndices(Tuple)
-            undef=Tuple['isUndefined']
-            notremoves-=undef
+            #undef=Tuple['isUndefined']
+            #notremoves-=undef
             print('took ', sw.getAndReset(), ' to create remove indices')
         
         if self.weight:
@@ -433,18 +439,18 @@ class TrainData_deepFlavour_FT_reg_noScale(TrainData_deepFlavour_FT_reg):
         alltruth=self.reduceTruth(truthtuple)
         
         eventweights = Tuple[self.eventweightbranch].astype(float)
-        #print('eventweights are: ', eventweights)
+        domainlabels = Tuple[self.domainbranch].astype(float)
 
 
-        #print(alltruth.shape)
         if self.remove:
-            print('remove')
+            print('remove ', notremoves)
             weights=weights[notremoves > 0]
             x_global=x_global[notremoves > 0]
             x_cpf=x_cpf[notremoves > 0]
             x_npf=x_npf[notremoves > 0]
             x_sv=x_sv[notremoves > 0]
             alltruth=alltruth[notremoves > 0]
+            eventweights=eventweights[notremoves>0]
             
             reco_pt=reco_pt[notremoves > 0]
             correctionfactor=correctionfactor[notremoves > 0]
@@ -452,14 +458,33 @@ class TrainData_deepFlavour_FT_reg_noScale(TrainData_deepFlavour_FT_reg):
         newnsamp=x_global.shape[0]
         print('reduced content to ', int(float(newnsamp)/float(self.nsamples)*100),'%')
         self.nsamples = newnsamp
+
+        print("remove: ",self.remove)
         
-        print(x_global.shape,self.nsamples)
+        #print(x_global.shape,self.nsamples)
 
-        #print('weights are: ', weights)
+        print('eventweights: ', eventweights)
+        print('eventweights shape: ', eventweights.shape)
 
-        self.w=[weights*eventweights,weights*eventweights]
+        print('domainlabels: ', domainlabels)
+        print('domainlabels shape: ',domainlabels.shape)
+
+        #print('input: ')
+        #print('x_global: ', x_global)
+        #print('x_cpf: ',x_cpf)
+        #print('x_npf: ',x_npf)
+        #print('x_sv: ',x_sv)
+
+        print('alltruth: ', alltruth)
+        print('alltruth shape: ', alltruth.shape)
+
+        print('weights are: ', weights)
+
+
+        self.w=[weights,eventweights,domainlabels]
         self.x=[x_global,x_cpf,x_npf,x_sv,reco_pt]
         self.y=[alltruth,correctionfactor]
+
 
 
 class TrainData_deepFlavour_QGOnly_reg(TrainData_QGOnly):

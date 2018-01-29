@@ -989,7 +989,7 @@ class DataCollection(object):
                 sumy += yout[0][i]
             sumy[0] /= len(yout[0])
 
-            print(sumy[0])
+            #print(sumy[0])
 
 
 

@@ -1,11 +1,103 @@
 from keras import backend as K
 
 from tensorflow import where, greater, abs, zeros_like, exp
+import tensorflow as tf
 
 global_loss_list={}
 
 #whenever a new loss function is created, please add it to the global_loss_list dictionary!
 
+def bce_weighted(y_true, y_pred):
+    '''binary crossentropy, including weights
+       y_true = [isSignal, eventweight]
+       y_pred = [prob_isSignal]
+    '''
+    isSignal =      y_true[:,0]
+    isSignalPred =  y_pred[:,0]
+    weight = y_true[:,-1]
+    return K.sum(weight * K.binary_crossentropy(isSignalPred,isSignal))/K.sum(weight)
+
+global_loss_list['bce_weighted']=bce_weighted
+
+
+def cce_weighted(y_true, y_pred):
+    '''categorical crossentropy, including weights
+       y_true = [isSignal_1, isSignla_2, ..., eventweight]
+       y_pred = [prob_isSignal_1, prob_isSignal_2, ...]
+    '''
+    isSignal =      y_true[:,:-1]
+    isSignalPred =  y_pred
+    weight = y_true[:,-1]
+    return K.sum(weight * K.categorical_crossentropy(isSignalPred,isSignal))/K.sum(weight)
+
+global_loss_list['cce_weighted']=cce_weighted
+
+
+def bce_weighted_dex(y_true, y_pred):
+    '''binary crossentropy, including weights, data excluded
+        for shuffled data/mc sample which only takes mc into account
+       y_true = [isSignal,  isData, eventweight]
+       y_pred = [prob_isSignal]
+    '''
+    isSignal = y_true[:,0] + y_true[:,1] + y_true[:,2]
+    isSignalPred = y_pred[:,0] + y_pred[:,1] + y_pred[:,2]
+    isData = y_true[:, -2:-1]
+    weight = y_true[:, -1:]
+    return K.sum(weight * K.binary_crossentropy(isSignalPred, isSignal) * (1 - isData)) / K.sum((1 - isData) * weight)
+
+global_loss_list['bce_weighted']=bce_weighted_dex
+
+
+def cce_weighted_dex(y_true, y_pred):
+    '''binary crossentropy, including weights, data excluded
+        for shuffled data/mc sample which only takes mc into account
+       y_true = [isSignal_1, isSignla_2, ..., isData, eventweight]
+       y_pred = [prob_isSignal_1, prob_isSignal_2, ...]
+    '''
+    isSignal = y_true[:,:-2]
+    isSignalPred = y_pred
+    isData = y_true[:, -2]
+    weight = y_true[:, -1]
+    return K.sum(weight * K.categorical_crossentropy(isSignalPred, isSignal) * (1 - isData)) / K.sum((1 - isData) * weight)
+
+global_loss_list['cce_weighted_dex']=cce_weighted_dex
+
+
+def moments_weighted(y_true, y_pred, momentum_weights = [1.,1.]):
+    '''punishment linear to the difference of the means and variance of the prediction distributions from data and mc
+       y_true = [isData, eventweight]
+       y_pred = [prob_isSignal_1, prob_isSignal_2, ...]
+       momentum_weights = [mean_weight, variance_weight]
+    '''
+    isData = y_true[:,:1]
+    weight = y_true[:,1:2]
+    for i in range(1,y_pred.shape[1]):  #for some reasons K.repeat doesn't work ...
+        weight = K.concatenate((weight,y_true[:,1:2]), axis = 1)
+
+    #computes the mean and variance value
+    moments_data = tf.nn.weighted_moments(y_pred, axes = 0, frequency_weights = weight*isData)
+    moments_mc = tf.nn.weighted_moments(y_pred, axes = 0, frequency_weights = weight*(1-isData))
+
+    return momentum_weights[0]* K.sum(abs(moments_data[0] - moments_mc[0])) + momentum_weights[1]*K.sum(abs(moments_data[1] - moments_mc[1]))
+
+global_loss_list['moments_weighted']=moments_weighted
+
+def combined_ccemv(y_true, y_pred):
+    '''
+    :param y_true: [isB, isBB, isLeptB, isC, isUDS, isG,  isData, eventweight]
+    :param y_pred: [prob_isB, prob_isBB, prob_isLeptB, prob_isC, prob_isUDS, prob_isG]
+    :return: combined loss function of cross entropy and moments (means and variances)
+    '''
+
+    weight_ce = 1.
+    weight_m = 0.5
+    weight_v = 0.1
+
+    y_true_dlw =  y_true[:,-2:]  #domain label and eventweight
+
+    return moments_weighted(y_true_dlw,y_pred,[weight_m,weight_v]) + weight_ce * cce_weighted_dex(y_true, y_pred)
+
+global_loss_list['combined_ccemv']= combined_ccemv
 
 def huberishLoss_noUnc(y_true, x_pred):
     
