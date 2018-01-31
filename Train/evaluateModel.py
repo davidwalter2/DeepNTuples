@@ -11,13 +11,13 @@ import pickle
 import tensorflow as tf
 import os
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '2'
 
 gpu_options = tf.GPUOptions(allow_growth=True) #,per_process_gpu_memory_fraction=0.1)
 s = tf.InteractiveSession(config=tf.ConfigProto(gpu_options=gpu_options))
 
 from training_base import training_base
-from Losses import loss_NLL, bce_weighted, cce_weighted, bce_weighted_dex, cce_weighted_dex
+from Losses import loss_NLL, bce_weighted, cce_weighted, bce_weighted_dex, cce_weighted_dex, metric_means, metric_variances
 
 def combined_bcemv(y_true, y_pred):
     '''
@@ -42,9 +42,10 @@ def combined_bcemv(y_true, y_pred):
 
 train=training_base()
 
-train.loadModel("/local/scratch/ssd1/dwalter/data/Ntuples_ttbarSelected/180124_all/180129_ccemv_1_01_0/KERAS_model.h5")
+train.loadModel("/local/scratch/ssd1/dwalter/data/Ntuples_ttbarSelected/180124_all/180131_test/KERAS_model.h5")
+print('model loaded')
 #train.loadModel("/storage/c/dwalter/data/TFModels/DF_2016Boost/KERAS_model.h5")
-train.compileModel(learningrate=0.0005, loss=[cce_weighted,loss_NLL], metrics=['accuracy'],loss_weights=[1., 0.0])
+#train.compileModel(learningrate=0.0005, loss=[cce_weighted,loss_NLL], metrics=['accuracy'],loss_weights=[1., 0.0])
 
 #gather the evaluation samples
 sample_inputs = train.train_data.getAllFeatures()

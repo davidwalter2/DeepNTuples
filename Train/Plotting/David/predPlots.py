@@ -37,12 +37,13 @@ weights = pickle.load(open(args.predictions,'rb'))[3]
 #pred_data = pickle.load(open(args.pred_data,'rb'))[1]
 print('got data')
 
-
 pred_mc = predictions[weights[2]==0]
 pred_data = predictions[weights[2]==1]
 
 truth_mc = truth[weights[2]==0]
 eventweights_mc = weights[1][weights[2]==0]
+
+print('Got ',len(pred_data),' data events and ',len(pred_mc),' MC events')
 
 #pred_isB = predictions[:,0]
 #pred_isBB = predictions[:,1]
@@ -103,8 +104,10 @@ for i,key in enumerate(keys):
     plt.hist(pred_mc[:,i], bins,weights = eventweights_mc,  label='mc', histtype='step', normed=True)
     plt.hist(pred_data[:,i], bins,label='data', histtype='step',normed=True)
     plt.text(0.2, plt.ylim()[1] * 0.9, 'mean = ' + str(av_data)[:7]+"(data) "+ str(av_mc)[:7]+"(mc)")
-    plt.text(0.2, plt.ylim()[1] * 0.85, 'var = ' + str(var_data)[:7]+"(data) "+ str(var_mc)[:7]+"(mc)")
-    plt.text(0.2, plt.ylim()[1] * 0.8, 'mc truth '+str(key)+' fraction = ' + str(np.sum(truth_mc[:,i]*eventweights_mc)/np.sum(eventweights_mc)))
+    plt.text(0.2, plt.ylim()[1] * 0.85, 'dm = ' + str(av_data - av_mc))
+    plt.text(0.2, plt.ylim()[1] * 0.8, 'var = ' + str(var_data)[:7]+"(data) "+ str(var_mc)[:7]+"(mc)")
+    plt.text(0.2, plt.ylim()[1] * 0.75, 'dv = ' + str(var_data - var_mc))
+    plt.text(0.2, plt.ylim()[1] * 0.7, 'mc truth '+str(key)+' fraction = ' + str(np.sum(truth_mc[:,i]*eventweights_mc)/np.sum(eventweights_mc)))
     plt.xlabel('pred_'+key)
     plt.ylabel('frequency')
     plt.legend()
@@ -121,9 +124,11 @@ print("data: ", av_data)
 plt.hist(pred_mc_isAnyB,bins,weights = eventweights_mc, label='mc', histtype='step', normed=True )
 plt.hist(pred_data_isAnyB, bins, label='data', histtype='step',normed=True)
 plt.text(0.2, plt.ylim()[1] * 0.9, 'mean = ' + str(av_data)[:7]+'(data) '+ str(av_mc)[:7]+'(mc)')
-plt.text(0.2, plt.ylim()[1] * 0.85, 'var = ' + str(var_data)[:7]+'(data) '+ str(var_mc)[:7]+'(mc)')
-plt.text(0.2, plt.ylim()[1] * 0.8, 'mc truth isAnyB fraction = ' + str(frac_isAnyB))
-plt.text(0.2, plt.ylim()[1] * 0.75, 'mc truth isAnyB accuracy = ' + str(acc_isAnyB))
+plt.text(0.2, plt.ylim()[1] * 0.85, 'dm = ' + str(av_data - av_mc))
+plt.text(0.2, plt.ylim()[1] * 0.8, 'var = ' + str(var_data)[:7]+'(data) '+ str(var_mc)[:7]+'(mc)')
+plt.text(0.2, plt.ylim()[1] * 0.75, 'dv = ' + str(var_data - var_mc))
+plt.text(0.2, plt.ylim()[1] * 0.7, 'mc truth isAnyB fraction = ' + str(frac_isAnyB))
+plt.text(0.2, plt.ylim()[1] * 0.65, 'mc truth isAnyB accuracy = ' + str(acc_isAnyB))
 plt.xlabel('pred_isAnyB')
 plt.ylabel('frequency')
 plt.legend()

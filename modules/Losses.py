@@ -7,6 +7,9 @@ global_loss_list={}
 
 #whenever a new loss function is created, please add it to the global_loss_list dictionary!
 
+
+### Losses implemented by david 01/18
+
 def bce_weighted(y_true, y_pred):
     '''binary crossentropy, including weights
        y_true = [isSignal, eventweight]
@@ -49,7 +52,7 @@ global_loss_list['bce_weighted']=bce_weighted_dex
 
 
 def cce_weighted_dex(y_true, y_pred):
-    '''binary crossentropy, including weights, data excluded
+    '''binary crossentropy, including weights, data samples are excluded in computation
         for shuffled data/mc sample which only takes mc into account
        y_true = [isSignal_1, isSignla_2, ..., isData, eventweight]
        y_pred = [prob_isSignal_1, prob_isSignal_2, ...]
@@ -64,7 +67,7 @@ global_loss_list['cce_weighted_dex']=cce_weighted_dex
 
 
 def moments_weighted(y_true, y_pred, momentum_weights = [1.,1.]):
-    '''punishment linear to the difference of the means and variance of the prediction distributions from data and mc
+    '''punishment linear to the difference of the means and variances of the prediction distributions from data and mc
        y_true = [isData, eventweight]
        y_pred = [prob_isSignal_1, prob_isSignal_2, ...]
        momentum_weights = [mean_weight, variance_weight]
@@ -84,8 +87,8 @@ global_loss_list['moments_weighted']=moments_weighted
 
 def combined_ccemv(y_true, y_pred):
     '''
-    :param y_true: [isB, isBB, isLeptB, isC, isUDS, isG,  isData, eventweight]
-    :param y_pred: [prob_isB, prob_isBB, prob_isLeptB, prob_isC, prob_isUDS, prob_isG]
+    :param y_true: [isSignal_1, isSignal_2, ... ,  isData, eventweight]
+    :param y_pred: [prob_isSignal_1, prob_isSignal_2, ...]
     :return: combined loss function of cross entropy and moments (means and variances)
     '''
 
@@ -98,6 +101,33 @@ def combined_ccemv(y_true, y_pred):
     return moments_weighted(y_true_dlw,y_pred,[weight_m,weight_v]) + weight_ce * cce_weighted_dex(y_true, y_pred)
 
 global_loss_list['combined_ccemv']= combined_ccemv
+
+
+###Some metrics
+def metric_means(y_true, y_pred):
+    weight_m = 1.
+    weight_v = 0.
+
+    y_true_dlw =  y_true[:,-2:]  #domain label and eventweight
+
+    return moments_weighted(y_true_dlw,y_pred,[weight_m,weight_v])
+
+global_loss_list['metric_means']= metric_means
+
+def metric_variances(y_true, y_pred):
+    weight_m = 0.
+    weight_v = 1.
+
+    y_true_dlw =  y_true[:,-2:]  #domain label and eventweight
+
+    return moments_weighted(y_true_dlw,y_pred,[weight_m,weight_v])
+
+global_loss_list['metric_variances']= metric_variances
+
+
+
+
+### more losses ...
 
 def huberishLoss_noUnc(y_true, x_pred):
     

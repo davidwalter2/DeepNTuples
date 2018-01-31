@@ -50,6 +50,8 @@ class Source:
 
         Source.collection.append(self)
 
+        print('finished initializing Source '+self.name)
+
 
     def plot_roc(self):
 
@@ -64,13 +66,15 @@ class Source:
 
     @classmethod
     def plot_rocs(cls):
-        plt.plot([0, 1], [0, 1], 'k--')
+        #plt.plot([0, 1], [0, 1], 'k--')
         for src in cls.collection:
-            plt.plot(src.fpr, src.tpr, label=src.name+' (auc=' + str(src.auc_score_mc)[:6] + ')')
-        plt.xlabel('False positive rate')
-        plt.ylabel('True positive rate')
+            plt.plot(src.tpr, src.fpr, label=src.name+' (auc=' + str(src.auc_score_mc)[:6] + ')')
+        plt.ylabel('False positive rate')
+        plt.xlabel('True positive rate')
+        plt.yscale('log')
+        plt.ylim(ymax=1.05, ymin=0.00095)
+        plt.xlim(xmax=1.05, xmin=0.395)
         plt.title('isAnyB ROC curve')
-        #plt.xscale('log')
         plt.legend()
         plt.savefig('roc.png')
         plt.cla()
@@ -80,10 +84,14 @@ class Source:
 
 pred_pre = Source('/local/scratch/ssd1/dwalter/data/Ntuples_ttbarSelected/180124_all/Predictions/predictions.p',name='pretrained')
 pred_180125ToF = Source('/local/scratch/ssd1/dwalter/data/Ntuples_ttbarSelected/180124_all/180125_TrainedOnFlavour/Predictions/predictions.p', name='180125ToF')
-pred_180126ccemv = Source('/local/scratch/ssd1/dwalter/data/Ntuples_ttbarSelected/180124_all/180126_Test_ccemv/Predictions/predictions.p', name='180126ccemv')
+pred_180126ccemv = Source('/local/scratch/ssd1/dwalter/data/Ntuples_ttbarSelected/180124_all/180126_ccemv_1_05_01/Predictions/predictions.p', name='ccemv_1_05_01')
+#pred_180129ccemv = Source('/local/scratch/ssd1/dwalter/data/Ntuples_ttbarSelected/180124_all/180129_ccemv_1_01_0/Predictions/predictions.p', name='ccemv_1_01_0')
+pred_180129ccemv = Source('/local/scratch/ssd1/dwalter/data/Ntuples_ttbarSelected/180124_all/180129_ccemv_1_01_0_shuffled/Predictions/predictions.p', name='ccemv_1_01_0')
+pred_180129ccemv = Source('/local/scratch/ssd1/dwalter/data/Ntuples_ttbarSelected/180124_all/180131_ccemv_1_02_004/Predictions/predictions.p', name='ccemv_1_02_004')
+
 
 print("make directory and save plots")
-directory = os.path.dirname('./plots_rocCollection/')
+directory = os.path.dirname('./Plots_rocCollection/')
 # make a canvas, draw, and save it
 if not os.path.exists(directory):
     os.makedirs(directory)
