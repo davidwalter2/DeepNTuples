@@ -168,7 +168,7 @@ public:
     int isLeptonicB_;
     int isLeptonicB_C_;
     int isTau_;
-    bool isRealData_;
+    int isRealData_;
 
     //truth labeling with fallback to physics definition for light/gluon/undefined of standard flavor definition
     int isPhysB_;
@@ -209,7 +209,7 @@ public:
     float crossSection_;
     float luminosity_;
     float efficiency_;
-    float jet_weight_;
+    float event_weight_;        //including lepton scalefactors, pup reweighting, cross section, lumi, efficiency
 
     //scale factor variables
     std::string sfMuonIdDir_;

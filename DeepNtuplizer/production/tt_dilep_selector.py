@@ -18,7 +18,7 @@ options.register('maxEvents',-1,VarParsing.VarParsing.multiplicity.singleton,Var
 options.register('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "skip N events")
 options.register('job', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "job number")
 options.register('nJobs', 1, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "total jobs")
-options.register('isData', False, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.bool, "switch off generator jets")
+options.register('isData', True, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.bool, "switch off generator jets")
 
 import os
 release=os.environ['CMSSW_VERSION'][6:11]
@@ -49,7 +49,7 @@ if options.isData == False:
 if options.isData == True:
     process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'               # For Data Jet Energy correction
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 10
@@ -116,10 +116,10 @@ for idmod in my_id_modules:
     setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
 
 #HighLevelTrigger
-HLTlistSM = cms.vstring("HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",       #Run B-G
-                        "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*",        #Run B-G
-                        "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*",    #Run H
-                        "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v*",     #Run H
+HLTlistSM = cms.vstring(#"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",       #Run B-G
+                        #"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*",        #Run B-G
+                        #"HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*",    #Run H
+                        #"HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v*",     #Run H
                         "HLT_Ele27_WPTight_Gsf_v*",                                 #Run B-H
                         "HLT_IsoTkMu24_v*",                                         #Run B-H
                         "HLT_IsoMu24_v*"                                            #Run B-H
@@ -223,7 +223,7 @@ process.FinalSel = cms.EDFilter("CandViewCountFilter",
 
 
 if options.isData:
-    process.ttbaremupath = cms.Path(process.hltHighLevelSM + process.FinalSel)
+    process.ttbaremupath = cms.Path(process.hltHighLevelSM + process.FinalSel)#
 else:
     process.ttbaremupath = cms.Path(process.hltHighLevelSM + process.FinalSel)
 

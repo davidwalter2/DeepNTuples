@@ -44,7 +44,7 @@ void ntuple_JetInfo::getInput(const edm::ParameterSet& iConfig){
     sfMuonIdName_ = (iConfig.getParameter<string>("sfMuonIDName"));
     sfMuonIsoName_ = (iConfig.getParameter<string>("sfMuonISOName"));
     sfMuonTrackingName_ = (iConfig.getParameter<string>("sfMuonTrackingName"));
-    sfElIdandIsoName_ = (iConfig.getParameter<string>("sfElIDandISOFile"));
+    sfElIdandIsoName_ = (iConfig.getParameter<string>("sfElIDandISOName"));
 
     useLHEWeights_ = (iConfig.getParameter<bool>("useLHEWeights"));
     crossSection_ = (iConfig.getParameter<double>("crossSection"));
@@ -113,7 +113,7 @@ void ntuple_JetInfo::getInput(const edm::ParameterSet& iConfig){
     x_edges[npoints] = x_centers[npoints-1] + x_highs[npoints-1];
 
     sfMuonTrackingHist = new TH1D("sfMuonTrackingHist", "sfMuonTrackingHist", npoints, x_edges);
-//    (*sfMuonTrackingHist)->SetDirectory(0); // without this the histo will get deleted when a currently open TFile is closed
+    sfMuonTrackingHist->SetDirectory(0); // without this the histo will get deleted when a currently open TFile is closed
     for(int i=0; i<npoints; ++i)
     {
 //     cout << i << ":" << y_centers[i] << "+-" << max(y_lows[i], y_highs[i]) << endl;
@@ -179,7 +179,7 @@ void ntuple_JetInfo::initBranches(TTree* tree){
     addBranch(tree,"jet_mass", &jet_mass_);
     addBranch(tree,"jet_energy", &jet_energy_);
 
-    addBranch(tree,"jet_weight", &jet_weight_);
+    addBranch(tree,"event_weight", &event_weight_);
     //jet id
     addBranch(tree,"jet_looseId", &jet_looseId_);
 
@@ -402,10 +402,10 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
             pupWeight = pupWeights.at(ntrueInt_);
         }
 
-        jet_weight_ = luminosity_ *  crossSection_ * efficiency_ * lheWeight * pupWeight;
+        event_weight_ = luminosity_ *  crossSection_ * efficiency_ * lheWeight * pupWeight;
     }
     else{
-        jet_weight_ = luminosity_ * crossSection_ * efficiency_;
+        event_weight_ = luminosity_ * crossSection_ * efficiency_;
     }
     rho_ = rhoInfo()[0];
 
@@ -430,10 +430,10 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
     muons_number_ = muIds.size();
     electrons_number_ = elecIds.size();
 
-    double leadingMuon_pt = 0.;
-    double leadingMuon_eta = 0.;
-    double leadingEl_pt = 0.;
-    double leadingEl_sueta = 0.;
+
+
+
+
 
     float etasign = 1.;
     if (jet.eta()<0) etasign = -1.;
@@ -449,10 +449,7 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
             muons_relEta_[i] = etasign*(muon.eta()-jet.eta());
             muons_relPhi_[i] = reco::deltaPhi(muon.phi(),jet.phi());
             muons_energy_[i] = muon.energy()/jet.energy();
-            if(muon.pt() > leadingMuon_pt){
-                leadingMuon_pt = muon.pt();
-                leadingMuon_eta = muon.eta();
-            }
+
         }
         if (i < elecIds.size()) {
             const auto & electron = (*electronsHandle).at(elecIds.at(i));
@@ -460,47 +457,68 @@ bool ntuple_JetInfo::fillBranches(const pat::Jet & jet,
             electrons_relEta_[i] = etasign*(electron.eta()-jet.eta());
             electrons_relPhi_[i] = reco::deltaPhi(electron.phi(),jet.phi());
             electrons_energy_[i] = electron.energy()/jet.energy();
-            if(electron.pt() > leadingEl_pt){
-                leadingEl_pt = electron.pt();
-                leadingEl_sueta = electron.superCluster()->eta();
-            }
+
         }
     }
 
-    //scalefactors
-    if(!iEvent.isRealData()){
+    //lepton scalefactor ...
+    //    ...needs leptons of the event
+        /*double leadingMuon_pt = 0.;
+    double leadingMuon_eta = 0.;
+    double leadingEl_pt = 0.;
+    double leadingEl_sueta = 0.;
+
+    if(electron.pt() > leadingEl_pt){
+        leadingEl_pt = electron.pt();
+        leadingEl_sueta = electron.superCluster()->eta();
+    }
+    if(muon.pt() > leadingMuon_pt){
+        leadingMuon_pt = muon.pt();
+        leadingMuon_eta = muon.eta();
+    }
+
+    //scalefactors currently disabled
+    if(!iEvent.isRealData){
+
+        //cout<<"leadingMuon_eta = "<<leadingMuon_eta<<std::endl;
+        //cout<<"leadingMuon_pt = "<<leadingMuon_pt<<std::endl;
+        //cout<<"leadingEl supercluster eta = "<<leadingEl_sueta<<std::endl;
+        //cout<<"leadingEl_pt = "<<leadingEl_pt<<std::endl;
 
         //Muon ID
         Int_t binx = sfMuonIdHist_xaxis->FindBin(std::abs(leadingMuon_eta));
         Int_t biny = sfMuonIdHist_yaxis->FindBin(leadingMuon_pt);
         if(leadingMuon_pt > 120.)   //dont take overflow bin, but the last one
             biny -= 1;
-
-        jet_weight_ *= sfMuonIdHist->GetBinContent(binx, biny);
+        float muonIdSf = sfMuonIdHist->GetBinContent(binx, biny);
 
         //Muon ISO
         binx = sfMuonIsoHist_xaxis->FindBin(std::abs(leadingMuon_eta));
         biny = sfMuonIsoHist_yaxis->FindBin(leadingMuon_pt);
         if(leadingMuon_pt > 120.)
             biny -= 1;
-
-        jet_weight_ *= sfMuonIsoHist->GetBinContent(binx, biny);
+        float muonIsoSf = sfMuonIsoHist->GetBinContent(binx, biny);
 
         //MuonTracking
         binx = sfMuonTrackingHist_axis->FindBin(std::abs(leadingMuon_eta));
-
-        jet_weight_ *= sfMuonTrackingHist->GetBinContent(binx, biny);
+        float muonTrackingSf = sfMuonTrackingHist->GetBinContent(binx, biny);
 
         //ElectronIDandISO
+
         binx = sfElIdandIsoHist_xaxis->FindBin(std::abs(leadingEl_sueta));
         biny = sfElIdandIsoHist_yaxis->FindBin(leadingEl_pt);
         if(leadingMuon_pt > 120.)
             biny -= 1;
+        float elSf = sfElIdandIsoHist->GetBinContent(binx, biny);
 
-        jet_weight_ *= sfElIdandIsoHist->GetBinContent(binx, biny);
+        //cout<<"muon ID scalefactor "<<muonIdSf<<std::endl;
+        //cout<<"muon iso scalefactor "<<muonIsoSf<<std::endl;
+        //cout<<"muon tracking scalefactor "<<muonTrackingSf<<std::endl;
+        //cout<<"electron scalefactor "<<elSf<<std::endl;
 
+        event_weight_ *= muonIdSf * muonIsoSf * muonTrackingSf * elSf;
 
-    }
+    }*/
 
 
     //// Note that jets with gluon->bb (cc) and x->bb (cc) are in the same categories

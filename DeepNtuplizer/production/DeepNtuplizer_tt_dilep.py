@@ -244,7 +244,7 @@ process.looseIVFcandidateVertexArbitrator.tracks = cms.InputTag("packedPFCandida
 process.looseIVFcandidateVertexArbitrator.secondaryVertices = cms.InputTag("looseIVFcandidateVertexMerger")
 process.looseIVFcandidateVertexArbitrator.fitterSigmacut = 20
 
-outFileName = options.config + '_2_' + str(options.job) + '.root'
+outFileName = options.config + '_1_' + str(options.job) + '.root'
 print ('Using output file ' + outFileName)
 
 process.TFileService = cms.Service("TFileService",

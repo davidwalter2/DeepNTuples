@@ -40,6 +40,7 @@
 #include "TLorentzVector.h"
 
 #include <algorithm>
+#include <fstream>
 
 //trash?
 
@@ -85,7 +86,6 @@ private:
     edm::EDGetTokenT<reco::VertexCompositePtrCandidateCollection> svToken_;
     edm::EDGetTokenT<edm::View<pat::Jet> >      jetToken_;
     edm::EDGetTokenT<std::vector<PileupSummaryInfo>> puToken_;
-    //edm::EDGetTokenT<LHEEventProduct> lheToken_;
     edm::EDGetTokenT<double> rhoToken_;
 
     std::string t_qgtagger;
@@ -105,8 +105,11 @@ private:
 
     bool applySelection_;
     bool isData_;
+    bool useEventIDsFile_ = true;
 
+    std::string eventIDsDir_;
     std::vector<long> eventIDs;
+
 };
 
 DeepNtuplizer::DeepNtuplizer(const edm::ParameterSet& iConfig):
@@ -135,6 +138,22 @@ DeepNtuplizer::DeepNtuplizer(const edm::ParameterSet& iConfig):
     isData_ = iConfig.getParameter<bool>("isData");
 
     ntuple_content::useoffsets = iConfig.getParameter<bool>("useOffsets");
+
+    eventIDsDir_ = (iConfig.getParameter<std::string>("eventIDs"));
+
+    std::ifstream infile(eventIDsDir_.c_str());
+    if(!infile){
+        std::cout<<"no file with eventIDs found\n";
+        useEventIDsFile_ = false;
+    }
+    else{
+        //std::cout<<"fill list of event ids\n";
+        long a;
+        while(infile >> a){
+            std::cout<<a<<"\n";
+            eventIDs.push_back(a);
+        }
+    }
 
     applySelection_=iConfig.getParameter<bool>("applySelection");
 
@@ -236,13 +255,24 @@ DeepNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(iEvent.isRealData()){ //to avoid double counting
 
         long eventID = iEvent.id().event();
-        if (std::find(eventIDs.begin(), eventIDs.end(), eventID) != eventIDs.end()){
 
-            std::cout<<"this event was already processed"<<std::endl;
-            return; //skip the event if it was already processed
+        //search directly in processing dataset for double events
+        if(!useEventIDsFile_){
+            if (std::find(eventIDs.begin(), eventIDs.end(), eventID) != eventIDs.end()){
+                //std::cout<<"this event was already processed"<<std::endl;
+                return; //skip the event if it was already processed
+            }
+            eventIDs.push_back(eventID);
+        }
+        else{
+            //binary search, eventIDs has to be initialized before and sorted
+            if (std::binary_search (eventIDs.begin(), eventIDs.end(), eventID)){
+                //std::cout << "found!\n";
+                return;
+            }
+            //else std::cout << "not found.\n";
         }
 
-        eventIDs.push_back(eventID);
     }
 
     //global info
