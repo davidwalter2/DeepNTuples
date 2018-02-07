@@ -3,6 +3,7 @@ from keras.models import Model
 from keras.layers.normalization import BatchNormalization
 from keras.layers.merge import Add, Multiply
 from buildingBlocks import block_deepFlavourConvolutions, block_deepFlavourDense, block_SchwartzImage, block_deepFlavourBTVConvolutions
+from Layers import GradientReversal
 
 def model_deepFlavourNoNeutralReference(Inputs,nclasses,nregclasses,dropoutRate=0.1):
     """
@@ -102,6 +103,91 @@ def model_deepFlavourReference(Inputs,nclasses,nregclasses,dropoutRate=0.1,momen
     predictions = [flavour_pred,reg_pred]
     model = Model(inputs=Inputs, outputs=predictions)
     return model
+
+def model_deepFlavourReference_gradientReversal(Inputs,nclasses,nregclasses,dropoutRate=0.1,momentum=0.6):
+    """
+        reference 1x1 convolutional model for 'deepFlavour'
+        with recurrent layers and batch normalisation
+        standard dropout rate it 0.1
+        should be trained for flavour prediction first. afterwards, all layers can be fixed
+        that do not include 'regression' and the training can be repeated focusing on the regression part
+        (check function fixLayersContaining with invert=True)
+        """
+    globalvars = BatchNormalization(momentum=momentum, name='globals_input_batchnorm')(Inputs[0])
+    cpf = BatchNormalization(momentum=momentum, name='cpf_input_batchnorm')(Inputs[1])
+    npf = BatchNormalization(momentum=momentum, name='npf_input_batchnorm')(Inputs[2])
+    vtx = BatchNormalization(momentum=momentum, name='vtx_input_batchnorm')(Inputs[3])
+    ptreginput = BatchNormalization(momentum=momentum, name='reg_input_batchnorm')(Inputs[4])
+
+    cpf, npf, vtx = block_deepFlavourConvolutions(charged=cpf,
+                                                  neutrals=npf,
+                                                  vertices=vtx,
+                                                  dropoutRate=dropoutRate,
+                                                  active=True,
+                                                  batchnorm=True, batchmomentum=momentum)
+
+    #
+    cpf = LSTM(150, go_backwards=True, implementation=2, name='cpf_lstm')(cpf)
+    cpf = BatchNormalization(momentum=momentum, name='cpflstm_batchnorm')(cpf)
+    cpf = Dropout(dropoutRate)(cpf)
+
+    npf = LSTM(50, go_backwards=True, implementation=2, name='npf_lstm')(npf)
+    npf = BatchNormalization(momentum=momentum, name='npflstm_batchnorm')(npf)
+    npf = Dropout(dropoutRate)(npf)
+
+    vtx = LSTM(50, go_backwards=True, implementation=2, name='vtx_lstm')(vtx)
+    vtx = BatchNormalization(momentum=momentum, name='vtxlstm_batchnorm')(vtx)
+    vtx = Dropout(dropoutRate)(vtx)
+
+    x = Concatenate()([globalvars, cpf, npf, vtx])
+
+    x = Dense(200, activation='relu', kernel_initializer='lecun_uniform', name='df_dense0')(x)
+    x = BatchNormalization(momentum=momentum, name='df_dense_batchnorm0')(x)
+    x = Dropout(dropoutRate, name='df_dense_dropout0')(x)
+    x = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='df_dense1')(x)
+    x = BatchNormalization(momentum=momentum, name='df_dense_batchnorm1')(x)
+    x = Dropout(dropoutRate, name='df_dense_dropout1')(x)
+    x = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='df_dense2')(x)
+    x = BatchNormalization(momentum=momentum, name='df_dense_batchnorm2')(x)
+    x = Dropout(dropoutRate, name='df_dense_dropout2')(x)
+    x = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='df_dense3')(x)
+    x = BatchNormalization(momentum=momentum, name='df_dense_batchnorm3')(x)
+    x = Dropout(dropoutRate, name='df_dense_dropout3')(x)
+    x = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='df_dense4')(x)
+    x = BatchNormalization(momentum=momentum, name='df_dense_batchnorm4')(x)
+    x = Dropout(dropoutRate, name='df_dense_dropout4')(x)
+    x = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='df_dense5')(x)
+    x = BatchNormalization(momentum=momentum, name='df_dense_batchnorm5')(x)
+    x = Dropout(dropoutRate, name='df_dense_dropout5')(x)
+    x = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='df_dense6')(x)
+    x = BatchNormalization(momentum=momentum, name='df_dense_batchnorm6')(x)
+    x = Dropout(dropoutRate, name='df_dense_dropout6')(x)
+    x = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='df_dense7')(x)
+    x = BatchNormalization(momentum=momentum, name='df_dense_batchnorm7')(x)
+
+    flavour_pred = Dense(nclasses, activation='softmax', kernel_initializer='lecun_uniform', name='ID_pred')(x)
+
+    reg = Concatenate()([flavour_pred, ptreginput])
+
+    reg_pred = Dense(nregclasses, activation='linear', kernel_initializer='ones', name='regression_pred',
+                     trainable=True)(reg)
+
+    #discriminator part
+    disc = GradientReversal(name='discriminator_gradientReversal')(flavour_pred)
+    disc = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='discriminator_dense1')(disc)
+    disc = Dropout(dropoutRate, name='discriminator_dense_dropout1')(disc)
+    disc = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='discriminator_dense2')(disc)
+    #disc = Dropout(dropoutRate, name='discriminator_dense_dropout2')(disc)
+    #disc = Dense(100, activation='relu', kernel_initializer='lecun_uniform', name='discriminator_dense3')(disc)
+    disc_pred = Dense(1, activation='sigmoid', kernel_initializer='lecun_uniform', name='discriminator_pred')(disc)
+
+    predictions = [flavour_pred, reg_pred, disc_pred]
+
+    model = Model(inputs=Inputs, outputs=predictions)
+
+    return model
+
+
 
 def convolutional_model_deepcsv(Inputs,nclasses,nregclasses,dropoutRate=-1):
     

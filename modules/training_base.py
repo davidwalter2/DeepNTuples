@@ -151,7 +151,12 @@ class training_base(object):
         #f = h5py.File(filename, 'r+')
         #del f['optimizer_weights']
         from keras.models import load_model
-        self.keras_model=load_model(filename, custom_objects=global_loss_list)
+        from Losses import global_loss_list
+        from Layers import global_layers_list
+        custom_objects_list = {}
+        custom_objects_list.update(global_loss_list)
+        custom_objects_list.update(global_layers_list)
+        self.keras_model=load_model(filename, custom_objects=custom_objects_list)
         self.optimizer=self.keras_model.optimizer
         self.compiled=True
         

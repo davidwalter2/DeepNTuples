@@ -1,5 +1,6 @@
 from training_base import training_base
-from Losses import loss_NLL, bce_weighted_dex, cce_weighted_dex, cce_weighted, moments_weighted, metric_means, metric_variances
+from Losses import loss_NLL, bce_weighted_dex, cce_weighted_dex, cce_weighted, moments_weighted
+from Losses import metric_means, metric_variances, all_moments_weighted, metric_mo1, metric_mo2, metric_mo3, metric_mo4
 from modelTools import fixLayersContaining
 import tensorflow as tf
 
@@ -8,7 +9,7 @@ import numpy as np
 import os
 import pickle
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 #gpu_options = tf.GPUOptions(allow_growth=True) #,per_process_gpu_memory_fraction=0.1)
 #s = tf.InteractiveSession(config=tf.ConfigProto())#gpu_options=gpu_options))
@@ -22,28 +23,30 @@ def combined_ccemv(y_true, y_pred):
     '''
 
     weight_ce = 1.
-    weight_m = 0.2
-    weight_v = 0.04
+    weight_m = 2.
+    weight_v = 5.
 
     y_true_dlw =  y_true[:,-2:]  #domain label and eventweight
 
     return moments_weighted(y_true_dlw,y_pred,[weight_m,weight_v]) + weight_ce * cce_weighted_dex(y_true, y_pred)
 
-
-
-def shuffle_in_unison(listofArrays):
+def combined_cce_moments(y_true, y_pred):
     '''
-    :param list of arrays: a list of numpy arrays with the same length in the first dimension
-    :return: list of arrays shuffled only in the first dimension
+    :param y_true: [isSignal_1, isSignal_2, ... ,  isData, eventweight]
+    :param y_pred: [prob_isSignal_1, prob_isSignal_2, ...]
+    :return: combined loss function of cross entropy and first four moments
     '''
-    shuffled_list = []
-    for arr in listofArrays:
-        shuffled_list.append(np.empty(arr.shape, dtype=arr.dtype))
-    permutation = np.random.permutation(len(listofArrays[0]))
-    for old_index, new_index in enumerate(permutation):
-        for i, arr in enumerate(listofArrays):
-            shuffled_list[i][new_index] = arr[old_index]
-    return shuffled_list
+
+    weight_ce = 1.
+    weight_m = 0.6
+    weight_v = 0.6
+    weight_s = 0.15
+    weight_k = 0.1
+
+    y_true_dlw = y_true[:, -2:]  # domain label and eventweight
+
+    return all_moments_weighted(y_true_dlw, y_pred, [weight_m, weight_v, weight_s, weight_k]) + weight_ce * cce_weighted_dex(y_true, y_pred)
+
 
 ### Main ------------------------------------------------------------------------------------
 
@@ -53,6 +56,8 @@ train.loadModel("/storage/c/dwalter/data/TFModels/DF_2016Boost/KERAS_model.h5")
 
 model = train.keras_model
 #model.summary()
+
+pdb.set_trace()
 
 #freeze all layers but some specific ones
 
@@ -69,7 +74,9 @@ fixLayersContaining(model,"dense",invert=True)
 
 #pdb.set_trace()
 
-train.compileModel(learningrate=0.0001, loss=[combined_ccemv, loss_NLL], metrics={'ID_pred':[cce_weighted_dex, metric_means, metric_variances]},loss_weights=[1., 0.0])
+#train.compileModel(learningrate=0.0001, loss=[combined_ccemv, loss_NLL], metrics={'ID_pred':[cce_weighted_dex, metric_means, metric_variances]},loss_weights=[1., 0.0])
+#train.compileModel(learningrate=0.0001, loss=[combined_cce_moments, loss_NLL], metrics={'ID_pred':[cce_weighted_dex, metric_mo1, metric_mo2, metric_mo3, metric_mo4]},loss_weights=[1., 0.0])
+train.compileModel(learningrate=0.0001, loss=[combined_ccemv, loss_NLL], metrics={'ID_pred':[cce_weighted_dex, metric_mo1, metric_mo2, metric_mo3, metric_mo4]},loss_weights=[1., 0.0])
 
 
 #gather the training samples
@@ -80,6 +87,7 @@ sample_weights = train.train_data.getAllWeights() #[weight, eventweight, domainL
 
 #shuffle data one time before fit, because validation data has to be shuffled too, this takes some time ...
 print('shuffle data ...')
+from Helpers import shuffle_in_unison
 sample_inputs[0], sample_inputs[1], sample_inputs[2], sample_inputs[3], sample_inputs[4], sample_labels[0], sample_labels[1], sample_weights[0], sample_weights[1], sample_weights[2] = shuffle_in_unison((sample_inputs[0], sample_inputs[1], sample_inputs[2], sample_inputs[3], sample_inputs[4], sample_labels[0], sample_labels[1], sample_weights[0], sample_weights[1], sample_weights[2]))
 print('done shuffling data')
 
@@ -98,11 +106,11 @@ sample_dlw = np.concatenate((np.array([sample_weights[2]]).T, np.array([sample_w
 print("compile model")
 
 
+history = model.fit(x=sample_inputs, y=[sample_fldlw,sample_labels[1]], batch_size=100000, epochs=150, validation_split=0.1)
 
-history = model.fit(x=sample_inputs, y=[sample_fldlw,sample_labels[1]], batch_size=100000, epochs=1, validation_split=0.1)
-
-#recompile without metrics, they would cause trouble when loading the model
+#recompile without metrics, they would cause trouble when loading the model, (can't load a list of metrics)
 train.compileModel(learningrate=0.0001, loss=[combined_ccemv, loss_NLL],loss_weights=[1., 0.0])
+#train.compileModel(learningrate=0.0001, loss=[combined_cce_moments, loss_NLL],loss_weights=[1., 0.0])
 
 
 model.save(train.outputDir+"KERAS_model.h5")

@@ -48,11 +48,11 @@ def bce_weighted_dex(y_true, y_pred):
     weight = y_true[:, -1:]
     return K.sum(weight * K.binary_crossentropy(isSignalPred, isSignal) * (1 - isData)) / K.sum((1 - isData) * weight)
 
-global_loss_list['bce_weighted']=bce_weighted_dex
+global_loss_list['bce_weighted_dex']=bce_weighted_dex
 
 
 def cce_weighted_dex(y_true, y_pred):
-    '''binary crossentropy, including weights, data samples are excluded in computation
+    '''categorical crossentropy, including weights, data samples are excluded in computation
         for shuffled data/mc sample which only takes mc into account
        y_true = [isSignal_1, isSignla_2, ..., isData, eventweight]
        y_pred = [prob_isSignal_1, prob_isSignal_2, ...]
@@ -85,6 +85,34 @@ def moments_weighted(y_true, y_pred, momentum_weights = [1.,1.]):
 
 global_loss_list['moments_weighted']=moments_weighted
 
+def all_moments_weighted(y_true, y_pred, momentum_weights = [1.,1.,1.,1.]):
+    '''punishment linear to the difference between data and mc of the first 4 moments of the prediction distributions
+       y_true = [isData, eventweight]
+       y_pred = [prob_isSignal_1, prob_isSignal_2, ...]
+       momentum_weights = [mean_weight, variance_weight, skewness_weight, kurtosis_weight]
+    '''
+    isData = y_true[:,:1]
+    weight = y_true[:,1:2]
+    for i in range(1,y_pred.shape[1]):  #for some reasons K.repeat doesn't work ...
+        weight = K.concatenate((weight,y_true[:,1:2]), axis = 1)
+
+    #computes the mean and variance value
+    moments_data = tf.nn.weighted_moments(y_pred, axes = 0, frequency_weights = weight*isData)
+    moments_mc = tf.nn.weighted_moments(y_pred, axes = 0, frequency_weights = weight*(1-isData))
+    mean_data = moments_data[0]
+    mean_mc = moments_mc[0]
+    var_data = moments_data[1]
+    var_mc = moments_mc[1]
+    skew_data = K.sum(weight*isData*K.pow(((y_pred-mean_data)/K.sqrt(var_data)),3), axis=0)/K.sum(weight*isData, axis=0)
+    skew_mc = K.sum(weight*(1-isData)*K.pow(((y_pred-mean_mc)/K.sqrt(var_mc)),3), axis=0)/K.sum(weight*(1-isData), axis=0)
+    kurt_data = K.sum(weight*isData*K.pow(((y_pred-mean_mc)/K.sqrt(var_mc)),3), axis=0)/K.sum(weight*isData, axis=0)
+    kurt_mc = K.sum(weight*(1-isData)*K.pow(((y_pred-mean_mc)/K.sqrt(var_mc)),3), axis=0)/K.sum(weight*(1-isData),axis=0)
+
+    return momentum_weights[0] * K.sum(abs(mean_data - mean_mc)) + momentum_weights[1] * K.sum(abs(var_data - var_mc)) + momentum_weights[2] * K.sum(abs(skew_data - skew_mc)) + momentum_weights[3] * K.sum(abs(kurt_data - kurt_mc))
+
+global_loss_list['all_moments_weighted']= all_moments_weighted
+
+
 def combined_ccemv(y_true, y_pred):
     '''
     :param y_true: [isSignal_1, isSignal_2, ... ,  isData, eventweight]
@@ -101,6 +129,26 @@ def combined_ccemv(y_true, y_pred):
     return moments_weighted(y_true_dlw,y_pred,[weight_m,weight_v]) + weight_ce * cce_weighted_dex(y_true, y_pred)
 
 global_loss_list['combined_ccemv']= combined_ccemv
+
+def combined_cce_moments(y_true, y_pred):
+    '''
+    :param y_true: [isSignal_1, isSignal_2, ... ,  isData, eventweight]
+    :param y_pred: [prob_isSignal_1, prob_isSignal_2, ...]
+    :return: combined loss function of cross entropy and first four moments
+    '''
+
+    weight_ce = 1.
+    weight_m = 1.
+    weight_v = 1.
+    weight_s = 1.
+    weight_k = 1.
+
+    y_true_dlw = y_true[:, -2:]  # domain label and eventweight
+
+    return all_moments_weighted(y_true_dlw, y_pred, [weight_m, weight_v, weight_s, weight_k]) + weight_ce * cce_weighted_dex(y_true, y_pred)
+
+
+global_loss_list['combined_cce_moments'] = combined_cce_moments
 
 
 ###Some metrics
@@ -124,6 +172,38 @@ def metric_variances(y_true, y_pred):
 
 global_loss_list['metric_variances']= metric_variances
 
+
+def metric_mo1(y_true, y_pred):
+
+    y_true_dlw =  y_true[:,-2:]  #domain label and eventweight
+
+    return all_moments_weighted(y_true_dlw,y_pred,[1,0,0,0])
+
+global_loss_list['metric_mo1']= metric_mo1
+
+def metric_mo2(y_true, y_pred):
+
+    y_true_dlw =  y_true[:,-2:]  #domain label and eventweight
+
+    return all_moments_weighted(y_true_dlw,y_pred,[0,1,0,0])
+
+global_loss_list['metric_mo2']= metric_mo2
+
+def metric_mo3(y_true, y_pred):
+
+    y_true_dlw =  y_true[:,-2:]  #domain label and eventweight
+
+    return all_moments_weighted(y_true_dlw,y_pred,[0,0,1,0])
+
+global_loss_list['metric_mo3']= metric_mo3
+
+def metric_mo4(y_true, y_pred):
+
+    y_true_dlw =  y_true[:,-2:]  #domain label and eventweight
+
+    return all_moments_weighted(y_true_dlw,y_pred,[0,0,0,1])
+
+global_loss_list['metric_mo4']= metric_mo4
 
 
 
