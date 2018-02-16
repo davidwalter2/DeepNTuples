@@ -2,15 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cbb1735d-ca41-4499-a328-553629fa1b53" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/data/MyDataPileupHist.root" afterPath="$PROJECT_DIR$/DeepNtuplizer/data/MyDataPileupHist.root" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/data/MyMCPileupHist.root" afterPath="$PROJECT_DIR$/DeepNtuplizer/data/MyMCPileupHist.root" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/deployment.xml" afterPath="$PROJECT_DIR$/.idea/deployment.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/Plots/make_plots.C" afterPath="$PROJECT_DIR$/DeepNtuplizer/Plots/make_plots.C" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/Plots/plots.py" afterPath="$PROJECT_DIR$/DeepNtuplizer/Plots/plots.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/plugins/puAnalyzer.cc" afterPath="$PROJECT_DIR$/DeepNtuplizer/plugins/puAnalyzer.cc" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/production/tt_dilep_selector.py" afterPath="$PROJECT_DIR$/DeepNtuplizer/production/tt_dilep_selector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/python/LHEcounter.py" afterPath="$PROJECT_DIR$/DeepNtuplizer/python/LHEcounter.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/python/PupMCHistProd.py" afterPath="$PROJECT_DIR$/DeepNtuplizer/python/PupMCHistProd.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/plots/events_MiniAOD.py" afterPath="$PROJECT_DIR$/DeepNtuplizer/plots/events_MiniAOD.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/plots/jets_NNvariables.py" afterPath="$PROJECT_DIR$/DeepNtuplizer/plots/jets_NNvariables.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/plots/jets_labelComposition.py" afterPath="$PROJECT_DIR$/DeepNtuplizer/plots/jets_labelComposition.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/plots/jets_leadingPFCand.py" afterPath="$PROJECT_DIR$/DeepNtuplizer/plots/jets_leadingPFCand.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/plugins/DeepNtuplizer.cc" afterPath="$PROJECT_DIR$/DeepNtuplizer/plugins/DeepNtuplizer.cc" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/DeepNtuplizer/python/DeepNtuplizer_data_cfi.py" afterPath="$PROJECT_DIR$/DeepNtuplizer/python/DeepNtuplizer_data_cfi.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,109 +20,103 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="tt_dilep_selector.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/production/tt_dilep_selector.py">
+      <file leaf-file-name="jets_labelComposition.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jets_labelComposition.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="53" column="0" lean-forward="true" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+            <state relative-caret-position="2592">
+              <caret line="258" column="0" lean-forward="true" selection-start-line="258" selection-start-column="0" selection-end-line="258" selection-end-column="0" />
               <folding>
-                <element signature="e#1#41#0" expanded="true" />
+                <element signature="e#142#152#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PupMCHistProd.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/python/PupMCHistProd.py">
+      <file leaf-file-name="jets_NNvariables.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jets_NNvariables.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1404">
-              <caret line="82" column="49" lean-forward="false" selection-start-line="82" selection-start-column="49" selection-end-line="82" selection-end-column="49" />
+            <state relative-caret-position="2088">
+              <caret line="116" column="54" lean-forward="false" selection-start-line="116" selection-start-column="54" selection-end-line="116" selection-end-column="54" />
               <folding>
-                <element signature="e#201#241#0" expanded="true" />
+                <element signature="e#85#95#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="plots.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/plots.py">
+      <file leaf-file-name="jet_variables_byLabel.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jet_variables_byLabel.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="586" column="5" lean-forward="false" selection-start-line="586" selection-start-column="0" selection-end-line="586" selection-end-column="5" />
+            <state relative-caret-position="18">
+              <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
               <folding>
-                <element signature="e#90#100#0" expanded="true" />
+                <element signature="e#120#130#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="make_plots.C" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/make_plots.C">
+      <file leaf-file-name="jet_variables.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jet_variables.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="26" column="12" lean-forward="false" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LHEcounter.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/python/LHEcounter.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="990">
-              <caret line="59" column="1" lean-forward="false" selection-start-line="59" selection-start-column="1" selection-end-line="59" selection-end-column="1" />
+            <state relative-caret-position="3276">
+              <caret line="182" column="26" lean-forward="false" selection-start-line="182" selection-start-column="26" selection-end-line="182" selection-end-column="26" />
               <folding>
-                <element signature="e#129#169#0" expanded="true" />
+                <element signature="e#299#309#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="lheAnalyzer.cc" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plugins/lheAnalyzer.cc">
+      <file leaf-file-name="DeepNtuplizer_dy10to50_cfi.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/python/DeepNtuplizer_dy10to50_cfi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" column="49" lean-forward="false" selection-start-line="7" selection-start-column="49" selection-end-line="7" selection-end-column="49" />
+            <state relative-caret-position="1188">
+              <caret line="66" column="59" lean-forward="false" selection-start-line="66" selection-start-column="55" selection-end-line="66" selection-end-column="59" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DeepNtuplizer.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/production/DeepNtuplizer.py">
+      <file leaf-file-name="jets_compareMiniAOD_Ntuple.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jets_compareMiniAOD_Ntuple.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1530">
-              <caret line="89" column="14" lean-forward="false" selection-start-line="89" selection-start-column="14" selection-end-line="89" selection-end-column="14" />
+            <state relative-caret-position="774">
+              <caret line="48" column="29" lean-forward="false" selection-start-line="48" selection-start-column="29" selection-end-line="48" selection-end-column="29" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="puAnalyzer.cc" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plugins/puAnalyzer.cc">
+      <file leaf-file-name="jets_leadingPFCand.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jets_leadingPFCand.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-11">
-              <caret line="85" column="25" lean-forward="true" selection-start-line="85" selection-start-column="25" selection-end-line="85" selection-end-column="25" />
-              <folding />
+            <state relative-caret-position="1782">
+              <caret line="101" column="50" lean-forward="false" selection-start-line="101" selection-start-column="41" selection-end-line="101" selection-end-column="50" />
+              <folding>
+                <element signature="e#85#95#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DeepNtuplizer.cc" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plugins/DeepNtuplizer.cc">
+      <file leaf-file-name="events_MiniAOD.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/events_MiniAOD.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4212">
-              <caret line="234" column="77" lean-forward="false" selection-start-line="234" selection-start-column="77" selection-end-line="234" selection-end-column="77" />
-              <folding />
+            <state relative-caret-position="9090">
+              <caret line="514" column="46" lean-forward="false" selection-start-line="514" selection-start-column="46" selection-end-line="514" selection-end-column="46" />
+              <folding>
+                <element signature="e#121#131#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DeepNtuplizer_cfi.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/python/DeepNtuplizer_cfi.py">
+      <file leaf-file-name="DeepNtuplizer_data_cfi.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DeepNtuplizer/python/DeepNtuplizer_data_cfi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="35" column="33" lean-forward="false" selection-start-line="35" selection-start-column="33" selection-end-line="35" selection-end-column="33" />
+            <state relative-caret-position="1494">
+              <caret line="83" column="60" lean-forward="false" selection-start-line="83" selection-start-column="55" selection-end-line="83" selection-end-column="60" />
               <folding />
             </state>
           </provider>
@@ -140,21 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>wt</find>
-      <find>datet</find>
-      <find>global_default_value</find>
-      <find>vert</find>
-      <find>muon</find>
-      <find>leption</find>
-      <find>allowUnscheduled</find>
-      <find>eo</find>
-      <find>input</find>
-      <find>outFileName</find>
-      <find>GoodOFLeptonPair</find>
-      <find>outmod</find>
-      <find>MINIAODSIMEventContent</find>
-      <find>ttbaremupath</find>
-      <find>output</find>
       <find>electrons</find>
       <find>puInfo</find>
       <find>puAnalyzer</find>
@@ -170,17 +148,23 @@
       <find>makeFullPlots</find>
       <find>alt</find>
       <find>scale</find>
+      <find>stack_isB</find>
+      <find>iswith</find>
+      <find>event_</find>
+      <find>isRealDa</find>
+      <find>bins</find>
+      <find>nbins</find>
+      <find>Fill</find>
+      <find>labels of</find>
+      <find>self.name</find>
+      <find>self.names</find>
+      <find>colorHists</find>
+      <find>name__</find>
+      <find>hist</find>
+      <find>, weight</find>
+      <find>jet_weight</find>
     </findStrings>
     <replaceStrings>
-      <replace>pat::Electron</replace>
-      <replace>Electron</replace>
-      <replace>LeadingL</replace>
-      <replace>trailing</replace>
-      <replace>Muon</replace>
-      <replace>h</replace>
-      <replace>j</replace>
-      <replace>ll</replace>
-      <replace>tl</replace>
       <replace>tt</replace>
       <replace>dy50</replace>
       <replace>dy10to50</replace>
@@ -201,6 +185,16 @@
       <replace>lheAnalyzer</replace>
       <replace>hist_mc</replace>
       <replace>hist_data</replace>
+      <replace>nbins</replace>
+      <replace>nbins, bins</replace>
+      <replace>len(nbins)</replace>
+      <replace>Line</replace>
+      <replace>self.name_variable</replace>
+      <replace>bins</replace>
+      <replace>self.name__hist</replace>
+      <replace>istack.hist_data</replace>
+      <replace>[i], weight</replace>
+      <replace>event_weight</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -209,11 +203,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/DeepNtuplizer/scripts/jobSub.py" />
-        <option value="$PROJECT_DIR$/DeepNtuplizer/production/samples_2016_singleMuon.cfg" />
-        <option value="$PROJECT_DIR$/DeepNtuplizer/production/samples_singleMuon_2016.cfg" />
-        <option value="$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_content.h" />
-        <option value="$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_bTagVars.h" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_DeepVertex.h" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_FatJetInfo.h" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_pfCands.h" />
@@ -226,7 +215,6 @@
         <option value="$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_JetInfo.h" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/python/DeepNtuplizer_cfi.py" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/src/ntuple_JetInfo.cc" />
-        <option value="$PROJECT_DIR$/DeepNtuplizer/plugins/DeepNtuplizer.cc" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/plugins/ElectronIsoAdder.h" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/plugins/ElectronIdAdder.h" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/python/samples/singleMuon_2016_cfg.py" />
@@ -254,8 +242,18 @@
         <option value="$PROJECT_DIR$/DeepNtuplizer/python/LHEcounter.py" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/plugins/puAnalyzer.cc" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/python/PupMCHistProd.py" />
-        <option value="$PROJECT_DIR$/DeepNtuplizer/production/tt_dilep_selector.py" />
         <option value="$PROJECT_DIR$/DeepNtuplizer/Plots/plots.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/production/tt_dilep_selector.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/plots/events_MiniAOD.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/plots/plotFromRoot.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/plugins/DeepNtuplizer.cc" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/python/DeepNtuplizer_data_cfi.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/plots/jets_leadingPFCand.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/plots/jet_variables_byLabel2.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/plots/jets_labelComposition.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/plots/jets_NNvariables.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/plots/jet_variables.py" />
+        <option value="$PROJECT_DIR$/DeepNtuplizer/plots/jet_variables_byLabel.py" />
       </list>
     </option>
   </component>
@@ -266,10 +264,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1644" />
-    <option name="y" value="89" />
-    <option name="width" value="1181" />
-    <option name="height" value="932" />
+    <option name="x" value="65" />
+    <option name="y" value="-4" />
+    <option name="width" value="1857" />
+    <option name="height" value="1212" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -286,6 +284,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -320,7 +319,7 @@
               <item name="DeepNTuples" type="b2602c69:ProjectViewProjectNode" />
               <item name="DeepNTuples" type="462c0819:PsiDirectoryNode" />
               <item name="DeepNtuplizer" type="462c0819:PsiDirectoryNode" />
-              <item name="Plots" type="462c0819:PsiDirectoryNode" />
+              <item name="plots" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="DeepNTuples" type="b2602c69:ProjectViewProjectNode" />
@@ -370,7 +369,6 @@
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -416,12 +414,12 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1345" y="-4" width="1855" height="1204" extended-state="6" />
+    <frame x="65" y="-4" width="1857" height="1212" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34335154" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19398907" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -476,90 +474,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/BuildFile.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/scripts/mergeSamples.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="522">
-          <caret line="31" column="11" lean-forward="true" selection-start-line="31" selection-start-column="11" selection-end-line="31" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/src/ntuple_bTagVars.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-79">
-          <caret line="100" column="25" lean-forward="true" selection-start-line="100" selection-start-column="25" selection-end-line="100" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/src/ntuple_content.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-155">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/src/ntuple_DeepVertex.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2538">
-          <caret line="141" column="4" lean-forward="true" selection-start-line="141" selection-start-column="4" selection-end-line="141" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/src/ntuple_FatJetInfo.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="655">
-          <caret line="123" column="104" lean-forward="false" selection-start-line="123" selection-start-column="104" selection-end-line="123" selection-end-column="104" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/interface/mergeDescriptor.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1721">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/src/ntuple_pfCands.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1327">
-          <caret line="205" column="0" lean-forward="true" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_bTagVars.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-407">
-          <caret line="45" column="30" lean-forward="true" selection-start-line="45" selection-start-column="30" selection-end-line="45" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_content.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1202">
-          <caret line="32" column="30" lean-forward="true" selection-start-line="32" selection-start-column="30" selection-end-line="32" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_DeepVertex.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="27" column="86" lean-forward="false" selection-start-line="27" selection-start-column="86" selection-end-line="27" selection-end-column="86" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_FatJetInfo.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1944">
@@ -571,13 +485,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1800">
           <caret line="100" column="41" lean-forward="false" selection-start-line="100" selection-start-column="41" selection-end-line="100" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_JetInfo.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2772">
-          <caret line="154" column="21" lean-forward="false" selection-start-line="154" selection-start-column="21" selection-end-line="154" selection-end-column="21" />
         </state>
       </provider>
     </entry>
@@ -602,13 +509,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/src/ntuple_JetInfo.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5220">
-          <caret line="290" column="71" lean-forward="false" selection-start-line="290" selection-start-column="71" selection-end-line="290" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/python/samples/TTJetsPhase1_cfg.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
@@ -626,20 +526,8 @@
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plugins/LeadingLeptonAdder.cc" />
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/hadd.C" />
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/hadd.cxx" />
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/getInfo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="8" column="51" lean-forward="true" selection-start-line="8" selection-start-column="51" selection-end-line="8" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/plots_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/getInfo.py" />
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/plots_data.py" />
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/test/run_DeepNtuplizer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3074">
@@ -725,41 +613,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
           <caret line="35" column="33" lean-forward="false" selection-start-line="35" selection-start-column="33" selection-end-line="35" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/plots_pyplot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="153" column="0" lean-forward="false" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/plots_pyplot.py" />
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/pyplot_test.py" />
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/make_plots.C">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="26" column="12" lean-forward="false" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plugins/DeepNtuplizer.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4212">
-          <caret line="234" column="77" lean-forward="false" selection-start-line="234" selection-start-column="77" selection-end-line="234" selection-end-column="77" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/make_plots.C" />
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/python/LHEcounter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="990">
           <caret line="59" column="1" lean-forward="false" selection-start-line="59" selection-start-column="1" selection-end-line="59" selection-end-column="1" />
-          <folding>
-            <element signature="e#129#169#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -767,15 +630,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="7" column="49" lean-forward="false" selection-start-line="7" selection-start-column="49" selection-end-line="7" selection-end-column="49" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/production/DeepNtuplizer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1530">
-          <caret line="89" column="14" lean-forward="false" selection-start-line="89" selection-start-column="14" selection-end-line="89" selection-end-column="14" />
-          <folding />
+          <caret line="89" column="1" lean-forward="true" selection-start-line="89" selection-start-column="1" selection-end-line="89" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -783,36 +644,146 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1404">
           <caret line="82" column="49" lean-forward="false" selection-start-line="82" selection-start-column="49" selection-end-line="82" selection-end-column="49" />
-          <folding>
-            <element signature="e#201#241#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/production/tt_dilep_selector.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="53" column="0" lean-forward="true" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
-          <folding>
-            <element signature="e#1#41#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plugins/puAnalyzer.cc">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-11">
+        <state relative-caret-position="1530">
           <caret line="85" column="25" lean-forward="true" selection-start-line="85" selection-start-column="25" selection-end-line="85" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/plots.py" />
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/plotFromRoot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="147" column="35" lean-forward="false" selection-start-line="147" selection-start-column="35" selection-end-line="147" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/production/tt_dilep_selector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2142">
+          <caret line="123" column="42" lean-forward="false" selection-start-line="123" selection-start-column="42" selection-end-line="123" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/production/DeepNtuplizer_tt_dilep.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/interface/ntuple_JetInfo.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="490">
+          <caret line="171" column="0" lean-forward="true" selection-start-line="171" selection-start-column="0" selection-end-line="171" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plugins/DeepNtuplizer.cc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4608">
+          <caret line="256" column="43" lean-forward="false" selection-start-line="256" selection-start-column="43" selection-end-line="256" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/src/ntuple_JetInfo.cc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2772">
+          <caret line="154" column="55" lean-forward="false" selection-start-line="154" selection-start-column="47" selection-end-line="154" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/events_MiniAOD.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9090">
+          <caret line="514" column="46" lean-forward="false" selection-start-line="514" selection-start-column="46" selection-end-line="514" selection-end-column="46" />
+          <folding>
+            <element signature="e#121#131#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/python/DeepNtuplizer_data_cfi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1494">
+          <caret line="83" column="60" lean-forward="false" selection-start-line="83" selection-start-column="55" selection-end-line="83" selection-end-column="60" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/Plots/plots.py">
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jets_compareMiniAOD_Ntuple.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="586" column="5" lean-forward="false" selection-start-line="586" selection-start-column="0" selection-end-line="586" selection-end-column="5" />
+        <state relative-caret-position="774">
+          <caret line="48" column="29" lean-forward="false" selection-start-line="48" selection-start-column="29" selection-end-line="48" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/interface/helpers.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jets_leadingPFCand.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1782">
+          <caret line="101" column="50" lean-forward="false" selection-start-line="101" selection-start-column="41" selection-end-line="101" selection-end-column="50" />
           <folding>
-            <element signature="e#90#100#0" expanded="true" />
+            <element signature="e#85#95#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/python/DeepNtuplizer_dy10to50_cfi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1188">
+          <caret line="66" column="59" lean-forward="false" selection-start-line="66" selection-start-column="55" selection-end-line="66" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jets_labelComposition.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2592">
+          <caret line="258" column="0" lean-forward="true" selection-start-line="258" selection-start-column="0" selection-end-line="258" selection-end-column="0" />
+          <folding>
+            <element signature="e#142#152#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jets_NNvariables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2088">
+          <caret line="116" column="54" lean-forward="false" selection-start-line="116" selection-start-column="54" selection-end-line="116" selection-end-column="54" />
+          <folding>
+            <element signature="e#85#95#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jet_variables_byLabel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding>
+            <element signature="e#120#130#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DeepNtuplizer/plots/jet_variables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3276">
+          <caret line="182" column="26" lean-forward="false" selection-start-line="182" selection-start-column="26" selection-end-line="182" selection-end-column="26" />
+          <folding>
+            <element signature="e#299#309#0" expanded="true" />
           </folding>
         </state>
       </provider>

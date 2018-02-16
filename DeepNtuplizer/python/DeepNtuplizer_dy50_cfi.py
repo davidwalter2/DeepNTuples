@@ -2,28 +2,11 @@ import FWCore.ParameterSet.Config as cms
 
 readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
-source = cms.Source ("PoolSource",
-                     fileNames = readFiles,
-                     secondaryFileNames = secFiles,
-                     inputCommands = cms.untracked.vstring(
-                        'keep *',
-                        'drop *_ctppsLocalTrackLiteProducer_*_*'
-                        )
-                     )
-
-for i in range(1,918): #918
+source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles)
+for i in range(1,147):    #147
     readFiles.extend( [
-        '/store/user/dwalter/TT_Dilepton_v3/MuonEG/data_MuonEG_H/180115_090538/0000/output_0_'+str(i)+'.root'
+        '/store/user/dwalter/TT_Dilepton_v4/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/dy50/180115_123816/0000/output_0_'+str(i)+'.root'
     ])
-for i in range(1,950): #950
-    readFiles.extend( [
-        '/store/user/dwalter/TT_Dilepton_v3/SingleElectron/data_SingleEl_H_2/180103_194356/0000/output_0_'+str(i)+'.root'
-    ])
-for i in range(1,950): #950
-    readFiles.extend( [
-        '/store/user/dwalter/TT_Dilepton_v3/SingleMuon/data_SingleMu_H_2/180102_102641/0000/output_0_'+str(i)+'.root'
-    ])
-
 
 deepntuplizer = cms.EDAnalyzer('DeepNtuplizer',
                                vertices   = cms.InputTag("offlineSlimmedPrimaryVertices"),
@@ -42,6 +25,8 @@ deepntuplizer = cms.EDAnalyzer('DeepNtuplizer',
                                fatjets = cms.InputTag('slimmedJetsAK8'),
                                muons = cms.InputTag("slimmedMuons"),
                                electrons = cms.InputTag("slimmedElectrons"),
+                               #muons = cms.InputTag("GoodMuon"),
+                               #electrons = cms.InputTag("GoodElectron"),
                                jetPtMin     = cms.double(20.0),
                                jetPtMax     = cms.double(1000),
                                jetAbsEtaMin = cms.double(0.0),
@@ -53,20 +38,20 @@ deepntuplizer = cms.EDAnalyzer('DeepNtuplizer',
                                qgtagger        = cms.string("QGTagger"),
                                candidates      = cms.InputTag("packedPFCandidates"),
 
+
                                useHerwigCompatible=cms.bool(False),
                                isHerwig=cms.bool(False),
                                useOffsets=cms.bool(True),
                                applySelection=cms.bool(True),
-                               isData=cms.bool(True),
-                               useLHEWeights=cms.bool(False),
+                               isData=cms.bool(False),
+                               useLHEWeights=cms.bool(True),
 
                                #for computation of event weights
                                pupDataDir=cms.string(   #Directory of the data pileup distribution root file for pileup reweighting
                                    "/afs/desy.de/user/d/dwalter/CMSSW_8_0_25/src/DeepNTuples/DeepNtuplizer/data/pileupData.root"),
-                                   #"/afs/cern.ch/work/d/dwalter/DeepNTuples/CMSSW_8_4_0/src/DeepNTuples/DeepNtuplizer/data/pileupData.root"),
+
                                pupMCDir=cms.string(     # Directory of the data pileup distribution root file for pileup reweighting
                                    "/afs/desy.de/user/d/dwalter/CMSSW_8_0_25/src/DeepNTuples/DeepNtuplizer/data/pileupMC.root"),
-                                   #"/afs/cern.ch/work/d/dwalter/DeepNTuples/CMSSW_8_4_0/src/DeepNTuples/DeepNtuplizer/data/pileupData.root"),
 
                                #scalefactor histograms
                                sfMuonIDFile=cms.string("/afs/desy.de/user/d/dwalter/CMSSW_8_0_25/src/DeepNTuples/DeepNtuplizer/data/EfficienciesAndSF_ID_GH.root"),
@@ -78,9 +63,9 @@ deepntuplizer = cms.EDAnalyzer('DeepNtuplizer',
                                sfElIDandISOFile=cms.string("/afs/desy.de/user/d/dwalter/CMSSW_8_0_25/src/DeepNTuples/DeepNtuplizer/data/egammaEffi.txt_EGM2D.root"),
                                sfElIDandISOName=cms.string("EGamma_SF2D"),
 
-                               eventIDs=cms.string(""), #directory of csv file with the sorted event ids to not process (avoid double counting)
+                               eventIDs=cms.string(""), #csv file with the sorted event ids to not process (avoid double counting)
 
-                               crossSection=cms.double(1.0),
-                               luminosity = cms.double(8.651),
-                               efficiency = cms.double(1.0)  #1/((effective) number of events
+                               crossSection=cms.double(6025200),
+                               luminosity = cms.double(35.9),
+                               efficiency = cms.double(1./81781052)  #1/((effective) number of events
                                )

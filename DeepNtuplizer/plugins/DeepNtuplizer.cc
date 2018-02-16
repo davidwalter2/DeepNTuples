@@ -268,7 +268,7 @@ DeepNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             //binary search, eventIDs has to be initialized before and sorted
             if (std::binary_search (eventIDs.begin(), eventIDs.end(), eventID)){
                 //std::cout << "found!\n";
-                return;
+                return; //skip the event if it was already processed
             }
             //else std::cout << "not found.\n";
         }

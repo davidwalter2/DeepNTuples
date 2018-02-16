@@ -117,19 +117,19 @@ class Source:
         self.hist_npv = ROOT.TH1F("npv"+self.name, "number of primary vertices "+self.name, 50,-.5,49.5)
         self.hist_sv_ntracks = ROOT.TH1F("sv_ntracks"+self.name, "number of tracks in secondary vertice "+self.name, 11,-.5,10.5)
         self.hist_sv_pt = ROOT.TH1F("sv_pt"+self.name, "number of primary vertices "+self.name, 40,0,150)
-        self.hist_weights = ROOT.TH1F("jet_weight_"+self.name, "weight of "+self.name+" jets", 50, min_weight, max_weight)
+        self.hist_weights = ROOT.TH1F("event_weight_"+self.name, "weight of "+self.name+" jets", 50, min_weight, max_weight)
 
 
-        self.tree.Draw("jet_pt>>jet_pt_"+self.name, "jet_weight")
-        self.tree.Draw("jet_eta>>jet_eta_"+self.name, "jet_weight")
-        self.tree.Draw("nCpfcand>>nCpfcand"+self.name, "jet_weight")
-        self.tree.Draw("nNpfcand>>nNpfcand"+self.name, "jet_weight")
-        self.tree.Draw("Cpfcan_ptrel>>Cpfcan_ptrel"+self.name, "jet_weight")
-        self.tree.Draw("nsv>>nsv"+self.name, "jet_weight")
-        self.tree.Draw("npv>>npv"+self.name, "jet_weight")
-        self.tree.Draw("sv_ntracks>>sv_ntracks"+self.name, "jet_weight")
-        self.tree.Draw("sv_pt>>sv_pt"+self.name, "jet_weight")
-        self.tree.Draw("jet_weight>>jet_weight_"+self.name)
+        self.tree.Draw("jet_pt>>jet_pt_"+self.name, "event_weight")
+        self.tree.Draw("jet_eta>>jet_eta_"+self.name, "event_weight")
+        self.tree.Draw("nCpfcand>>nCpfcand"+self.name, "event_weight")
+        self.tree.Draw("nNpfcand>>nNpfcand"+self.name, "event_weight")
+        self.tree.Draw("Cpfcan_ptrel>>Cpfcan_ptrel"+self.name, "event_weight")
+        self.tree.Draw("nsv>>nsv"+self.name, "event_weight")
+        self.tree.Draw("npv>>npv"+self.name, "event_weight")
+        self.tree.Draw("sv_ntracks>>sv_ntracks"+self.name, "event_weight")
+        self.tree.Draw("sv_pt>>sv_pt"+self.name, "event_weight")
+        self.tree.Draw("event_weight>>event_weight_"+self.name)
 
 
         self.hists = self.hist_jet_pt, self.hist_jet_eta, self.hist_nCpfcand, self.hist_nNpfcand, self.hist_Cpfcan_ptrel, self.hist_nsv, self.hist_npv, self.hist_sv_ntracks, self.hist_sv_pt
@@ -196,7 +196,7 @@ class Source:
 
         c1 = ROOT.TCanvas()
         self.hist_weights.Draw()
-        c1.Print(self.name + "_Jet_weight.png")
+        c1.Print(self.name + "_event_weight.png")
 
 
     @classmethod

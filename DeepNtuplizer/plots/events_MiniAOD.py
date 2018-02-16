@@ -31,8 +31,8 @@ ROOT.gSystem.Load("libDataFormatsFWLite.so")
 ROOT.gSystem.Load("libDataFormatsPatCandidates.so")
 
 #files to load
-datafile = "data_full.txt"
-ttfilelist = "tt.txt"
+datafile = "data_test.txt"
+ttfilelist = "tt_test.txt"
 dy10to50file ="dy10to50.txt"
 dy50filelist = "dy50.txt"
 wwfile = "ww.txt"
@@ -720,14 +720,14 @@ printDiffList(hist_pileup_Data, hist_pileup_MC, "pileup_difference")
 
 fillHists(hists_data, infile=datafile, isData=True, eventIDs = eventIDs)
 fillHists(hists_tt, infile=ttfilelist)
-fillHists(hists_dy50, infile=dy50filelist, useLHEWeights =  True)      #only events from amcatnloFXFX generator have weights != 1
-fillHists(hists_dy10to50, infile=dy10to50file, useLHEWeights = True)
-fillHists(hists_ww, infile=wwfile)
-fillHists(hists_wz, infile=wzfile)
-fillHists(hists_zz, infile=zzfile)
-fillHists(hists_wantit, infile=wantitfilelist)
-fillHists(hists_wt, infile=wtfilelist)
-fillHists(hists_wjets, infile=wjetsfilelist, useLHEWeights = True)
+#fillHists(hists_dy50, infile=dy50filelist, useLHEWeights =  True)      #only events from amcatnloFXFX generator have weights != 1
+#fillHists(hists_dy10to50, infile=dy10to50file, useLHEWeights = True)
+#fillHists(hists_ww, infile=wwfile)
+#fillHists(hists_wz, infile=wzfile)
+#fillHists(hists_zz, infile=zzfile)
+#fillHists(hists_wantit, infile=wantitfilelist)
+#fillHists(hists_wt, infile=wtfilelist)
+#fillHists(hists_wjets, infile=wjetsfilelist, useLHEWeights = True)
 
 
 print("postprocessing")
@@ -753,7 +753,7 @@ colorHists(hists_zz,        ROOT.kYellow)
 colorHists(hists_tt,        ROOT.kRed)
 colorHists(hists_wjets,     ROOT.kGreen)
 
-title='180111_SF'
+title='180213_SF'
 
 directory = os.path.dirname('./plots_'+title+'/')
 # make a canvas, draw, and save it

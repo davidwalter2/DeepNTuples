@@ -113,7 +113,7 @@ class Source:
             Source.stack_Npfcan_pt.addDataHist(self.hist_Npfcan_pt)
 
         else:
-            self.scaleHists(0.8180639286773081)
+            #self.scaleHists(0.8180639286773081)
 
             Source.stack_Cpfcan_pt.addHist(self.hist_Cpfcan_pt)
             Source.stack_Npfcan_pt.addHist(self.hist_Npfcan_pt)
@@ -128,7 +128,7 @@ class Source:
 
         for entry in self.tree:
 
-            weight = entry.jet_weight
+            weight = entry.event_weight
 
             Cpfcan_pt = entry.Cpfcan_pt
             Npfcan_pt = entry.Npfcan_pt
